@@ -63,7 +63,14 @@ def run_apps():
 
 def make_gui():
     root.title('Рассылка расчетных листков Квартплата24')
-    root.geometry('1000x800')
+    w = root.winfo_screenwidth()
+    h = root.winfo_screenheight()
+    w = w // 2  # середина экрана
+    h = h // 2
+    w = w - 200  # смещение от середины
+    h = h - 200
+    root.geometry('600x900+{}+{}'.format(w, h))     #root.resizable(False, False)
+
     canvas = tk.Canvas(root, height=800, width=600, bg="#263D42")
     canvas.pack()
 
