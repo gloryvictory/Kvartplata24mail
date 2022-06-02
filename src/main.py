@@ -1,6 +1,27 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#
+#   Author          : Viacheslav Zamaraev
+#   email           : zamaraev@gmail.com
+#   Script Name     : main.py
+#   Created         : 02.06.2022
+#   Last Modified	: 02.06.2022
+#   Version		    : 1.0
+#   PIP             :
+#   RESULT          :
+# Modifications	: 1.1 -
+# Description   : load data from Excel file and send to users by list pdf attachements
+# @echo off
+
+# C:\Glory\Projects\Python\Kvartplata24mail\data\Севастопольская
+
 import tkinter as tk
 from tkinter import filedialog, Text
 import os
+from core.logger import get_logger
+
+logger = get_logger()
+
 
 
 root = tk.Tk()
@@ -20,7 +41,7 @@ def addApp():
         widget.destroy()
 
     filename = filedialog.askopenfilename(
-        initialdir="/", title="Select file", filetypes=(("executables", "*.exe"), ("all files", "*.*")))
+        initialdir="/", title="Select file", filetypes=(("Excel", "*.xlsx"), ("all files", "*.*")))
     apps.append(filename)
     print(apps)
     for app in apps:
