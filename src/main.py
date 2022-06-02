@@ -63,6 +63,7 @@ def run_apps():
 
 def make_gui():
     root.title('Рассылка расчетных листков Квартплата24')
+    root.geometry('1000x800')
     canvas = tk.Canvas(root, height=800, width=600, bg="#263D42")
     canvas.pack()
 
