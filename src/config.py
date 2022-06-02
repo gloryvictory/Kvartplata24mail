@@ -21,7 +21,7 @@ FOLDER_OUT_WIN = ''
 #CSV_DELIMITER = ';'
 
 FILE_LOG_NAME = 'kvartplata24_logger'
-FILE_LOG = str(strftime("%Y-%m-%d") + FILE_LOG_NAME + '.log')
+FILE_LOG = str(strftime("%Y-%m-%d") + '_'+FILE_LOG_NAME + '.log')
 FILE_LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 #sFILE_LOG_LEVEL = 'INFO'
 
