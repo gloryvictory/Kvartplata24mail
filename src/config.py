@@ -3,7 +3,7 @@
 #
 #   Author          : Viacheslav Zamaraev
 #   email           : zamaraev@gmail.com
-#   Script Name     : cfg.py
+#   Script Name     : config.py
 #   Created         : 02.06.2022
 #   Last Modified	: 02.06.2022
 #   Version		    : 1.0
@@ -21,13 +21,13 @@ FOLDER_OUT_WIN = ''
 #CSV_DELIMITER = ';'
 
 FILE_LOG_NAME = 'kvartplata24_logger'
-FILE_LOG = str(strftime("%Y-%m-%d") + '_'+FILE_LOG_NAME + '.log')
+FILE_LOG = str(strftime("%Y-%m-%d") + '_'+ FILE_LOG_NAME + '.log')
 FILE_LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 #sFILE_LOG_LEVEL = 'INFO'
+DATABASE_NAME = str(strftime("%Y-%m-%d") + '_'+ FILE_LOG_NAME + '.db')
 
 SMTP_HOST = ''
 SMTP_PORT =''
 SMTP_USER = ''
 SMTP_PASSWORD = ''
 
-#DATABASE_NAME = 'gisdata'
