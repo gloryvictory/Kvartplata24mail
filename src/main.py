@@ -21,24 +21,36 @@ import os
 from datetime import datetime
 
 from core.logger import get_logger
+import config
 
 logger = get_logger()
 
 global root
 
 root = tk.Tk()
+
 apps = []
 
 # the new
-def addApp():
+def add_app():
 
     for widget in frame.winfo_children():
         widget.destroy()
+    #logging.info(config.FOLDER_IN_EXCEL)
+    folder_in  = ''
+    print(config.FOLDER_IN_EXCEL)
+
+    if os.path.isdir(config.FOLDER_IN_EXCEL):
+        folder_in = config.FOLDER_IN_EXCEL
+    else:
+        folder_in = '/'
 
     filename = filedialog.askopenfilename(
-        initialdir="/", title="Select file", filetypes=(("Excel", "*.xlsx"), ("all files", "*.*")))
+        initialdir=folder_in, title="Укажите файл Excel", filetypes=(("Excel", "*.xlsx"), ("all files", "*.*")))
+
     apps.append(filename)
     print(apps)
+
     for app in apps:
         label = tk.Label(frame, text=app, bg="gray")
         label.pack()
@@ -50,15 +62,17 @@ def run_apps():
 
 
 def make_gui():
-    canvas = tk.Canvas(root, height=700, width=700, bg="#263D42")
+    root.title('Рассылка расчетных листков Квартплата24')
+    canvas = tk.Canvas(root, height=800, width=600, bg="#263D42")
     canvas.pack()
 
+    global frame
     frame = tk.Frame(root, bg="white")
     frame.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
 
-    openFile = tk.Button(root, text="Open File", padx=25,
-                         pady=10, fg='white', bg="#263D42", command=addApp)
-    openFile.pack()
+    open_file = tk.Button(root, text="Open File", padx=25,
+                         pady=10, fg='white', bg="#263D42", command=add_app)
+    open_file.pack()
 
     btn_run_apps = tk.Button(root, text="Run Apps", padx=25,
                         pady=10, fg='white', bg="#263D42", command=run_apps)
