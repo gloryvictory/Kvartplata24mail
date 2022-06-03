@@ -18,6 +18,9 @@
 import os
 import sys
 from datetime import datetime
+from PySide6 import QtUiTools
+from PySide6.QtGui import *
+
 from PySide6.QtWidgets import (QApplication, QMainWindow)
 
 # from PySide6.QtCore import (QCoreApplication, QtGui, QDate, QDateTime, QLocale,
@@ -31,7 +34,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow)
 #     QListWidgetItem, QMainWindow, QProgressBar, QPushButton,
 #     QSizePolicy, QStatusBar, QTabWidget, QWidget)
 
-from ui.main_form import Ui_frmMain
+# from ui.main_form import Ui_frmMain
 
 from core.logger import get_logger
 import config
@@ -47,15 +50,21 @@ def make_gui():
     # form.show()
     # sys.exit(app.exec_())
 
-    if hasattr(Ui_frmMain,'Ui_MainWindow'):
-        ui = Ui_frmMain.UiMainWindow()
-    else:
-        ui = Ui_frmMain.UiForm()
 
-    app = QApplication([])
-    win = QMainWindow()
-    ui.setupUI(win)
-    win.show()
+    # app = QApplication([])
+    # win = QMainWindow()
+    # if hasattr(Ui_frmMain,'Ui_frmMain'):
+    #     ui = Ui_frmMain()
+    #     ui.setupUI(win)
+    # # else:
+    # #     ui = Ui_frmMain()
+    # win.show()
+    # app.exec()
+
+    app = QApplication(sys.argv)
+    window = QtUiTools.QUiLoader().load("ui/main_form.ui")
+    window.show()
+    sys.exit(app.exec_())
 
 
 def main():
