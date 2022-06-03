@@ -88,6 +88,12 @@ class Ui_frmMain(object):
 
         self.tabOperations.setCurrentIndex(0)
 
+    #     self.btnExcel.clicked(self.test)
+    #
+    # def test(self):
+    #     print('click from 1111')
+
+
 
         QMetaObject.connectSlotsByName(frmMain)
     # setupUi
