@@ -16,7 +16,7 @@
 # C:\Glory\Projects\Python\Kvartplata24mail\data\Севастопольская
 
 import tkinter as tk
-from tkinter import filedialog, Text
+from tkinter import filedialog, Text, Label, Entry
 import os
 from datetime import datetime
 
@@ -77,6 +77,15 @@ def make_gui():
     global frame
     frame = tk.Frame(root, bg="white")
     frame.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
+
+    Label1 = Label(root, text='First Name').grid(row=0, column=1)
+    Label2 = Label(root, text='Last Name').grid(row=1, column=0)
+    # Label1.pack()
+    # Label2.pack()
+    # e1 = Entry(root)
+    # e2 = Entry(root)
+    # e1.grid(row=0, column=1)
+    # e2.grid(row=1, column=1)
 
     open_file = tk.Button(root, text="Open File", padx=25,
                          pady=10, fg='white', bg="#263D42", command=add_app)
