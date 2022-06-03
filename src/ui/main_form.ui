@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>frmMain</class>
+ <widget class="QMainWindow" name="frmMain">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -16,8 +16,20 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>1110</width>
+    <height>804</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1110</width>
+    <height>804</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Программа</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="groupBox">
@@ -129,7 +141,10 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
+     </property>
+     <property name="movable">
+      <bool>true</bool>
      </property>
      <widget class="QWidget" name="tabExcel">
       <attribute name="title">
@@ -155,6 +170,11 @@
         </rect>
        </property>
       </widget>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Настройки</string>
+      </attribute>
      </widget>
     </widget>
    </widget>
