@@ -51,13 +51,15 @@ class MainWindow(QMainWindow):
 
         fname, _  = QFileDialog.getOpenFileName(self,
                                                 "Open Excel File", folder_data_start, "Excel Files (*.xlsx)")
-
+        fname = os.path.normpath(fname)
         self.folder_excel_fullpath = fname
         print(os.path.dirname(fname))
         basename = os.path.basename(fname)
         print(basename)
         basename_without_ext = os.path.splitext(os.path.basename(fname))[0]
         print(basename_without_ext)
+        path_db = os.path.join(os.path.dirname(fname), basename_without_ext + '.db')
+        print(path_db)
 
         # dialog = QFileDialog(self)
         # dialog.setFileMode(QFileDialog.AnyFile)
