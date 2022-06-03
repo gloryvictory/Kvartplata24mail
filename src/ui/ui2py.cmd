@@ -1,0 +1,1 @@
+C:\Glory\Projects\Python\Kvartplata24mail\venv\Scripts\pyside6-uic.exe "main_form.ui" -o "main_form.py"
