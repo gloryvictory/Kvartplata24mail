@@ -16,7 +16,8 @@
 from time import strftime   # Load just the strftime Module from Time
 
 FOLDER_OUT_WIN = ''
-FOLDER_IN_EXCEL = 'C:\\Glory\\Projects\\Python\\Kvartplata24mail\\data\\'
+FOLDER_DATA = 'C:\\Glory\\Projects\\Python\\Kvartplata24mail\\data\\'
+
 #FILE_CSV = str(time.strftime("%Y-%m-%d") + "_shp" + ".csv")
 #CSV_DELIMITER = ';'
 
