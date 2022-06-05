@@ -23,8 +23,8 @@ from datetime import datetime
 from PySide6.QtWidgets import (QApplication, QMainWindow, QFileDialog, QListWidgetItem)
 
 from peewee import *
-from database import Person
-from database import db as db_sqlite
+from database import Person, excel_to_db
+from database import db
 
 from ui.main_form import Ui_frmMain
 
@@ -69,6 +69,10 @@ class MainWindow(QMainWindow):
         else:
             folder_data_start = '/'
 
+        if os.path.isfile(cfg.DATABASE_NAME):
+            os.remove(cfg.DATABASE_NAME)
+
+
         fname1, _ = QFileDialog.getOpenFileName(self,
                                                 "Open Excel File", folder_data_start, "Excel Files (*.xlsx)")
         fname = os.path.normpath(fname1)
@@ -81,12 +85,20 @@ class MainWindow(QMainWindow):
         self.folder_base = os.path.dirname(fname)
         file_db = os.path.join(self.folder_base, filename_without_ext + '.db')
         self.ui.lvLog.addItem(f"Установлен файл sqlite: {file_db}")
-        self.db = db_sqlite
-        self.db.connect()
-        self.person = Person()
-        # self.person.Meta.database = self.db
-        self.person.create_table()
-        self.person.create(name='qweqweqwe')
+
+        # self.db = db
+        # self.db.connect()
+
+        # self.person = Person()
+        # # # self.person.Meta.database = self.db
+        # self.person.create_table()
+        # # self.person.create(name='AAAAqweqweqwe' )
+        # self.person.name = 'AAAAqweqweqwe'
+        # self.person.save()
+        excel_to_db(fname)
+        # Person.create_table()
+        # Person.create(name='qweqweqwe' )
+        # Person.save()
 
         # dialog = QFileDialog(self)
         # dialog.setFileMode(QFileDialog.AnyFile)
