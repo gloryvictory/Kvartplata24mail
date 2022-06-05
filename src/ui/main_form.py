@@ -58,19 +58,25 @@ class Ui_frmMain(object):
         self.groupBox_3.setGeometry(QRect(10, 110, 1091, 651))
         self.tabOperations = QTabWidget(self.groupBox_3)
         self.tabOperations.setObjectName(u"tabOperations")
-        self.tabOperations.setGeometry(QRect(0, 20, 1091, 621))
+        self.tabOperations.setGeometry(QRect(0, 20, 1091, 631))
         self.tabOperations.setMovable(True)
         self.tabExcel = QWidget()
         self.tabExcel.setObjectName(u"tabExcel")
+        self.lvExcel = QListWidget(self.tabExcel)
+        self.lvExcel.setObjectName(u"lvExcel")
+        self.lvExcel.setGeometry(QRect(0, 0, 1091, 611))
         self.tabOperations.addTab(self.tabExcel, "")
         self.tabPDF = QWidget()
         self.tabPDF.setObjectName(u"tabPDF")
+        self.lvPDF = QListWidget(self.tabPDF)
+        self.lvPDF.setObjectName(u"lvPDF")
+        self.lvPDF.setGeometry(QRect(0, 0, 1091, 611))
         self.tabOperations.addTab(self.tabPDF, "")
         self.tabLog = QWidget()
         self.tabLog.setObjectName(u"tabLog")
-        self.listWidget = QListWidget(self.tabLog)
-        self.listWidget.setObjectName(u"listWidget")
-        self.listWidget.setGeometry(QRect(0, 0, 1091, 601))
+        self.lvLog = QListWidget(self.tabLog)
+        self.lvLog.setObjectName(u"lvLog")
+        self.lvLog.setGeometry(QRect(0, 0, 1091, 611))
         self.tabOperations.addTab(self.tabLog, "")
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")
@@ -87,12 +93,6 @@ class Ui_frmMain(object):
         self.retranslateUi(frmMain)
 
         self.tabOperations.setCurrentIndex(0)
-
-    #     self.btnExcel.clicked(self.test)
-    #
-    # def test(self):
-    #     print('click from 1111')
-
 
 
         QMetaObject.connectSlotsByName(frmMain)

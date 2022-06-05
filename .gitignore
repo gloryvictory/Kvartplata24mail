@@ -10,6 +10,9 @@ data/
 
 .idea/
 
+people.db
+*.db
+
 # Distribution / packaging
 .Python
 build/

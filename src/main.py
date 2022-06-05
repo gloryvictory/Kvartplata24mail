@@ -17,18 +17,20 @@
 
 import os
 import sys
+import logging
 from datetime import datetime
 # from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtWidgets import (QApplication, QMainWindow, QFileDialog)
+from PySide6.QtWidgets import (QApplication, QMainWindow, QFileDialog, QListWidgetItem)
 
-
+from peewee import *
+from database import Person
+from database import db as db_sqlite
 
 from ui.main_form import Ui_frmMain
 
-from core.logger import get_logger
+
 import config as cfg
 
-logger = get_logger()
 
 
 class MainWindow(QMainWindow):
@@ -36,36 +38,62 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_frmMain()
         self.ui.setupUi(self)
-        self.folder_excel_fullpath = '' # полный путь к файлу Excel
+        self.folder_excel_fullpath = ''         # полный путь к файлу Excel
+        self.folder_base = ''                   # папка с Excel
+        self.folder_pdf = ''                    #папка с pdf файлами
 
 
-        self.ui.btnExcel.clicked.connect(self.OpenFileExcel)
-    def OpenFileExcel(self):
+
+        self.ui.btnExcel.clicked.connect(self.open_file_excel)
+
+        # self.set_logger()
+
+    # def set_logger(self):
+    #     for handler in logging.root.handlers[:]:  # Remove all handlers associated with the root logger object.
+    #         logging.root.removeHandler(handler)
+    #     # dir_out = get_output_directory()
+    #     # file_log = str(os.path.join(dir_out, cfg.file_log))  # from cfg.file
+    #     file_log = cfg.FILE_LOG
+    #     if os.path.isfile(file_log):  # Если выходной LOG файл существует - удаляем его
+    #         os.remove(file_log)
+    #     logging.basicConfig(filename=file_log, format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO,
+    #                         filemode='w')
+    #     logging.info(file_log)
+
+
+    def open_file_excel(self):
         # self.folder_data = cfg.FOLDER_DATA
         folder_data_start = ''
         if os.path.isdir(cfg.FOLDER_DATA):
             folder_data_start = cfg.FOLDER_DATA
-
         else:
             folder_data_start = '/'
 
-        fname, _  = QFileDialog.getOpenFileName(self,
+        fname1, _ = QFileDialog.getOpenFileName(self,
                                                 "Open Excel File", folder_data_start, "Excel Files (*.xlsx)")
-        fname = os.path.normpath(fname)
+        fname = os.path.normpath(fname1)
+
+        self.ui.lvLog.addItem(f"Указан файл Excel: {fname}")
+
         self.folder_excel_fullpath = fname
-        print(os.path.dirname(fname))
-        basename = os.path.basename(fname)
-        print(basename)
-        basename_without_ext = os.path.splitext(os.path.basename(fname))[0]
-        print(basename_without_ext)
-        path_db = os.path.join(os.path.dirname(fname), basename_without_ext + '.db')
-        print(path_db)
+        # basename = os.path.basename(fname) # получить имя файла
+        filename_without_ext = os.path.splitext(os.path.basename(fname))[0]
+        self.folder_base = os.path.dirname(fname)
+        file_db = os.path.join(self.folder_base, filename_without_ext + '.db')
+        self.ui.lvLog.addItem(f"Установлен файл sqlite: {file_db}")
+        self.db = db_sqlite
+        self.db.connect()
+        self.person = Person()
+        # self.person.Meta.database = self.db
+        self.person.create_table()
+        self.person.create(name='qweqweqwe')
 
         # dialog = QFileDialog(self)
         # dialog.setFileMode(QFileDialog.AnyFile)
         # dialog.setNameFilter(tr("Excel files (*.xlsx)"))
         self.ui.leExcel.setText(fname)
         print(f'qeqweqweqweqweqweqwe + {fname}')
+
 
 def make_gui():
     app = QApplication(sys.argv)

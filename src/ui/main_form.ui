@@ -137,7 +137,7 @@
        <x>0</x>
        <y>20</y>
        <width>1091</width>
-       <height>621</height>
+       <height>631</height>
       </rect>
      </property>
      <property name="currentIndex">
@@ -150,23 +150,43 @@
       <attribute name="title">
        <string>Excel</string>
       </attribute>
-     </widget>
-     <widget class="QWidget" name="tabPDF">
-      <attribute name="title">
-       <string>PDF</string>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="tabLog">
-      <attribute name="title">
-       <string>Журнал</string>
-      </attribute>
-      <widget class="QListWidget" name="listWidget">
+      <widget class="QListWidget" name="lvExcel">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
          <width>1091</width>
-         <height>601</height>
+         <height>611</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tabPDF">
+      <attribute name="title">
+       <string>PDF</string>
+      </attribute>
+      <widget class="QListWidget" name="lvPDF">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1091</width>
+         <height>611</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tabLog">
+      <attribute name="title">
+       <string>Журнал</string>
+      </attribute>
+      <widget class="QListWidget" name="lvLog">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1091</width>
+         <height>611</height>
         </rect>
        </property>
       </widget>
