@@ -193,6 +193,7 @@ class MainWindow(QMainWindow):
 
                 one_file.street = adr_array[0]  # Улица
                 adr_array.pop(0)
+
                 adr_array.pop(0)  # пропускаем букву д
 
                 adr_array.pop(0)  # пропускаем кв
@@ -207,9 +208,8 @@ class MainWindow(QMainWindow):
                 one_file.month = adr_array[len(adr_array) - 1]
                 adr_array.pop(len(adr_array) - 1)
 
-                one_file.year = '2022'
-                # one_file.year = adr_array[len(adr_array) - 1]
-                # adr_array.pop(len(adr_array) - 1)
+                one_file.year = "20" + adr_array[len(adr_array) - 1]
+                adr_array.pop(len(adr_array) - 1)
 
                 one_file.lic_id = adr_array[len(adr_array) - 1]
                 adr_array.pop(len(adr_array) - 1)

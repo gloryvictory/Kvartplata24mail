@@ -1,8 +1,10 @@
+autopep8==1.6.0
 et-xmlfile==1.1.0
 numpy==1.22.4
 openpyxl==3.0.10
 pandas==1.4.2
 peewee==3.14.10
+pycodestyle==2.8.0
 PySide6==6.3.0
 PySide6-Addons==6.3.0
 PySide6-Essentials==6.3.0
@@ -10,3 +12,4 @@ python-dateutil==2.8.2
 pytz==2022.1
 shiboken6==6.3.0
 six==1.16.0
+toml==0.10.2
