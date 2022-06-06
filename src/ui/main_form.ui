@@ -89,7 +89,7 @@
     <property name="title">
      <string>Папка с PDF файлами:</string>
     </property>
-    <widget class="QLineEdit" name="lineEdit_2">
+    <widget class="QLineEdit" name="lePDF">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -105,7 +105,7 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnExcel_2">
+    <widget class="QPushButton" name="btnPDF">
      <property name="geometry">
       <rect>
        <x>1010</x>
@@ -198,7 +198,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QProgressBar" name="progressBar">
+   <widget class="QProgressBar" name="pbMain">
     <property name="geometry">
      <rect>
       <x>10</x>
