@@ -19,10 +19,11 @@ import os
 import sys
 import logging
 from datetime import datetime
-from PySide6.QtWidgets import (QApplication, QMainWindow, QFileDialog, QListWidgetItem)
+from PySide6.QtWidgets import (
+    QApplication, QMainWindow, QFileDialog, QListWidgetItem)
 from os import walk
 
-from peewee import *
+#from peewee import *
 from database import Person, Files
 import pandas as pd
 
@@ -38,7 +39,7 @@ class MainWindow(QMainWindow):
         self.folder_excel_fullpath = ''         # полный путь к файлу Excel
         self.folder_base = ''                   # папка с Excel
         self.folder_pdf = ''                    # папка с pdf файлами
-        self.ui.btnExcel.setEnabled(True);
+        self.ui.btnExcel.setEnabled(True)
         # self.ui.btnPDF.setEnabled(False); # убрал для дебага  - потом раскомментировать
 
         self.ui.btnExcel.clicked.connect(self.open_file_excel)
@@ -47,6 +48,7 @@ class MainWindow(QMainWindow):
         # self.ui.progressBar.setRange(0, 100)
 
     ''' Берем Excel файл и заноси в sqlite базу только тех, у кого есть email '''
+
     def excel_to_db(self):
         file_excel_full_path = self.folder_excel_fullpath
         if not os.path.isfile(file_excel_full_path):
@@ -59,7 +61,8 @@ class MainWindow(QMainWindow):
             one_person = Person()
             one_person.create_table()
             # Load the xlsx file
-            excel_data = pd.read_excel(file_excel_full_path,  sheet_name= cfg.EXCEL_SHEET_NAME)
+            excel_data = pd.read_excel(
+                file_excel_full_path,  sheet_name=cfg.EXCEL_SHEET_NAME)
             # Read the values of the file in the dataframe
             data = pd.DataFrame(excel_data)
             print(data.columns)
@@ -77,7 +80,7 @@ class MainWindow(QMainWindow):
             for index, row in data.iterrows():
                 tmp_str = str(row['E-mail'])
                 # Выбираем всех, у кого есть почта
-                if len(tmp_str) > 4 :
+                if len(tmp_str) > 4:
                     cnt_load += 1
                     one_person = Person()
                     # print(row['E-mail'], row['Имя'])
@@ -97,21 +100,27 @@ class MainWindow(QMainWindow):
 
                 else:
                     cnt_missed += 1
-                    msg_str = str(row['Фамилия']).strip().upper()  + " " + str(row['Имя']).strip().upper() + " " +  str(row['Отчество']).strip().upper()
+                    msg_str = str(row['Фамилия']).strip().upper(
+                    ) + " " + str(row['Имя']).strip().upper() + " " + str(row['Отчество']).strip().upper()
                     self.ui.lvLog.addItem(f"Нет EMAIL у:  {msg_str} ")
 
-                self.ui.pbMain.setValue(cnt_load + cnt_missed) # сдвигаем прогресс бар
+                # сдвигаем прогресс бар
+                self.ui.pbMain.setValue(cnt_load + cnt_missed)
 
-            self.ui.lvExcel.addItem(f"Найдено, что у {cnt_missed} пользователей нет EMAIL")
-            self.ui.lvExcel.addItem(f"В Базу загружено {cnt_load} пользователей, у которых есть EMAIL")
-            self.ui.lvLog.addItem(f"Найдено, что у {cnt_missed} пользователей нет EMAIL")
-            self.ui.lvLog.addItem(f"В Базу загружено {cnt_load} пользователей, у которых есть EMAIL")
+            self.ui.lvExcel.addItem(
+                f"Найдено, что у {cnt_missed} пользователей нет EMAIL")
+            self.ui.lvExcel.addItem(
+                f"В Базу загружено {cnt_load} пользователей, у которых есть EMAIL")
+            self.ui.lvLog.addItem(
+                f"Найдено, что у {cnt_missed} пользователей нет EMAIL")
+            self.ui.lvLog.addItem(
+                f"В Базу загружено {cnt_load} пользователей, у которых есть EMAIL")
 
             # Print the content
             # print("The content of the file is:\n", data)
 
-
     ''' При нажатии на кнопку "Открыть" '''
+
     def open_file_excel(self):
         # self.folder_data = cfg.FOLDER_DATA
         folder_data_start = ''
@@ -122,7 +131,6 @@ class MainWindow(QMainWindow):
 
         if os.path.isfile(cfg.DATABASE_NAME):
             os.remove(cfg.DATABASE_NAME)
-
 
         fname1, _ = QFileDialog.getOpenFileName(self,
                                                 "Open Excel File", folder_data_start, "Excel Files (*.xlsx)")
@@ -140,16 +148,12 @@ class MainWindow(QMainWindow):
 
         self.ui.leExcel.setText(fname)
 
-        self.excel_to_db() # разбираем файл Excel
+        self.excel_to_db()  # разбираем файл Excel
 
-        self.ui.btnExcel.setEnabled(False);
-        self.ui.btnPDF.setEnabled(True);
-
-
-
+        self.ui.btnExcel.setEnabled(False)
+        self.ui.btnPDF.setEnabled(True)
 
     ''' Берем Excel файл и заноси в sqlite базу только тех, у кого есть email '''
-
 
     def pdf_to_db(self):
         folder_pdf_path = self.folder_pdf
@@ -159,31 +163,61 @@ class MainWindow(QMainWindow):
             print(msg_str)
             self.ui.lvLog.addItem(msg_str)
         else:
-            #self.ui.btnPDF.setEnabled(False);
-            self.ui.tabOperations.setCurrentIndex(self.ui.tabOperations.currentIndex() + 1)
+            # self.ui.btnPDF.setEnabled(False);
+            self.ui.tabOperations.setCurrentIndex(
+                self.ui.tabOperations.currentIndex() + 1)
 
-            filenames = next(walk(folder_pdf_path), (None, None, []))[2]  # [] if no file
+            filenames = next(walk(folder_pdf_path), (None, None, []))[
+                2]  # [] if no file
             msg_str = f"Найдено PDF файлов: {str(len(filenames))} "
             self.ui.lvPDF.addItem(msg_str)
+
             one_file = Files()
             one_file.create_table()
 
             for ff in filenames:
                 msg_str = ff
+                full_name = os.path.join(folder_pdf_path, ff)
                 self.ui.lvLog.addItem(msg_str)
-                one_file = Files()
-                one_file.file_name = ff
-                filename_without_ext = str(os.path.splitext(os.path.basename(fname))[0])
+
+                filename_without_ext = str(
+                    os.path.splitext(os.path.basename(ff))[0])
                 adr_array = filename_without_ext.split('_')
+
+                one_file = Files()
+
+                one_file.file_name = full_name
+
+                one_file.street_type = adr_array[0]  # Ул
+                adr_array.pop(0)
+
+                one_file.street = adr_array[0]  # Улица
+                adr_array.pop(0)
+                adr_array.pop(0)  # пропускаем букву д
+
+                adr_array.pop(0)  # пропускаем кв
+
+                one_file.flat = adr_array[0]  # квартира
+                adr_array.pop(0)
+
+                one_file.home = adr_array[0]
+                adr_array.pop(0)
+
+                # one_file.year
+                one_file.month = adr_array[len(adr_array) - 1]
+                adr_array.pop(len(adr_array) - 1)
+
+                one_file.year = '2022'
+                # one_file.year = adr_array[len(adr_array) - 1]
+                # adr_array.pop(len(adr_array) - 1)
+
+                one_file.lic_id = adr_array[len(adr_array) - 1]
+                adr_array.pop(len(adr_array) - 1)
 
                 one_file.save()
 
-
-
-
-
-
     ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
+
     def open_file_pdf(self):
         if os.path.isdir(cfg.FOLDER_DATA):
             folder_data_start = cfg.FOLDER_DATA
@@ -200,7 +234,7 @@ class MainWindow(QMainWindow):
         self.folder_pdf = os.path.dirname(fname)
         self.ui.lePDF.setText(self.folder_pdf)
 
-        self.pdf_to_db() # разбираем файл Excel
+        self.pdf_to_db()  # разбираем файл Excel
 
 
 def make_gui():
@@ -222,7 +256,6 @@ def main():
     print('Finishing at :' + str(time2))
     print('Total time : ' + str(time2 - time1))
     print('DONE !!!!')
-
 
 
 if __name__ == "__main__":
