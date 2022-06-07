@@ -24,12 +24,14 @@ from datetime import datetime
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QFileDialog, QListWidgetItem)
 from os import walk
+import subprocess
 
 #from peewee import *
 from peewee import Table
 
 from database import Person, Files
 import pandas as pd
+from dialogs import CustomDialog
 
 from ui.main_form import Ui_frmMain
 import config as cfg
@@ -227,15 +229,22 @@ class MainWindow(QMainWindow):
         for li in query:
             list_lic_id.append(li.lic_id)
         #list_lic_id_sorted  = list_lic_id.sort()
-
+        cnt_all = len(list_lic_id)
+        self.ui.pbMain.setRange(1, cnt_all - 1)
+        counter = 0
         for item in sorted(list_lic_id):
+            counter += 1
+            self.ui.pbMain.setValue(counter)
             query_person = Person.select().where(Person.lic_id == item).execute()
 
             if bool(query_person):
                 print(item + ' ' + str(query_person.count))
-                fn = item + "_" + query_person[0].surname + "_" + query_person[0].name + \
+                fn = item + \
+                    "_" + query_person[0].surname + \
+                    "_" + query_person[0].name + \
                     "_" + query_person[0].middlename + \
                     "_" + query_person[0].street_addr
+
                 # person_json = json.dump(query_person[0])
                 print(fn)
                 p_fio = query_person[0].surname + "_" + \
@@ -243,12 +252,14 @@ class MainWindow(QMainWindow):
                 p_addr = query_person[0].street_addr
                 p_lic_id = item
                 p_email = query_person[0].email
-                person_json = {
-                    "fio": p_fio,
-                    "address": p_addr,
-                    "lic_id": p_lic_id,
-                    "email": p_email,
-                }
+                # формируем json
+                person_json = \
+                    {
+                        "fio": p_fio,
+                        "address": p_addr,
+                        "lic_id": p_lic_id,
+                        "email": p_email,
+                    }
 
                 # Запрашиваем файлы у которых есть такой лицевой счет
                 query_file = Files.select().where(Files.lic_id == item).execute()
@@ -267,16 +278,33 @@ class MainWindow(QMainWindow):
                             full_name_pdf_out,  str_file_out_name)
                         str_out_json = os.path.join(
                             full_name_pdf_out, "info.json")
+
                         with open(str_out_json, 'w', encoding='utf-8') as f:
                             json.dump(person_json, f,
                                       ensure_ascii=False, indent=4)
                         #shutil.copy(str_from, str_out)
                         shutil.move(str_from, str_out)
-
-                        print(f"копируем из: {str_from} в: {str_out}")
+                        self.ui.lvLog.addItem(
+                            f"копируем из: {str_from} в: {str_out}")
 
             else:
                 print("Файл для " + item + " - Не найден!")
+
+        dlg = CustomDialog()
+        if dlg.exec():
+            self.ui.lvLog.addItem("Сортировка закончена успешно!")
+            #print("Сортировка закончена успешно!")
+            FILEBROWSER_PATH = os.path.join(
+                os.getenv('WINDIR'), 'explorer.exe')
+            if os.path.isfile(FILEBROWSER_PATH):
+                subprocess.Popen(
+                    [FILEBROWSER_PATH, '/select,', os.path.normpath(folder_pdf_path)])
+                #subprocess.Popen(r'explorer /select, ' + folder_pdf_path)
+        else:
+            print("Cancel!")
+
+        self.ui.btnPDF.setEnabled(False)
+
         #lic_id_distinct = str(str_addr)
         # print(lic_id_distinct)
 
