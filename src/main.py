@@ -44,7 +44,8 @@ class MainWindow(QMainWindow):
         self.folder_base = ''                   # папка с Excel
         self.folder_pdf = ''                    # папка с pdf файлами
         self.ui.btnExcel.setEnabled(True)
-        self.ui.btnPDF.setEnabled(False); # убрал для дебага  - потом раскомментировать
+        # убрал для дебага  - потом раскомментировать
+        self.ui.btnPDF.setEnabled(False)
 
         self.ui.btnExcel.clicked.connect(self.open_file_excel)
         self.ui.btnPDF.clicked.connect(self.open_file_pdf)
@@ -88,8 +89,11 @@ class MainWindow(QMainWindow):
                     cnt_load += 1
                     one_person = Person()
                     # print(row['E-mail'], row['Имя'])
-                    str_adr = "д_" + str(row['Дом']) + "_" + str(row['Тип адреса Квартира']) + "_" + str(row['Квартира'])
-                    one_person.street_addr = str_adr.replace("/","_").replace(" ", "_")
+                    str_adr = "д_" + \
+                        str(row['Дом']) + "_" + str(row['Тип адреса Квартира']
+                                                    ) + "_" + str(row['Квартира'])
+                    one_person.street_addr = str_adr.replace(
+                        "/", "_").replace(" ", "_")
                     one_person.street_type = row['Тип адреса улицы']
                     one_person.street = row['Улица']
                     one_person.home = row['Дом']
@@ -160,6 +164,7 @@ class MainWindow(QMainWindow):
         self.ui.btnPDF.setEnabled(True)
 
     ''' Берем Excel файл и заноси в sqlite базу только тех, у кого есть email '''
+
     def pdf_to_db(self):
         folder_pdf_path = self.folder_pdf
         if not os.path.isdir(folder_pdf_path):
@@ -172,7 +177,7 @@ class MainWindow(QMainWindow):
             self.ui.tabOperations.setCurrentIndex(
                 self.ui.tabOperations.currentIndex() + 1)
 
-            #filenames = next(walk(folder_pdf_path), (None, None, []))[2]  # [] if no file
+            # filenames = next(walk(folder_pdf_path), (None, None, []))[2]  # [] if no file
             filenames = []
             # r=root, d=directories, f = files
             for r, d, f in os.walk(folder_pdf_path):
@@ -211,10 +216,9 @@ class MainWindow(QMainWindow):
                 adr_array.pop(len(adr_array) - 1)
                 # Адрес
                 str_addr = ' '.join(adr_array)
-                one_file.street_addr  = str_addr
+                one_file.street_addr = str_addr
 
                 one_file.save()
-
 
     def pdf_to_folders(self):
         folder_pdf_path = self.folder_pdf
@@ -229,20 +233,24 @@ class MainWindow(QMainWindow):
 
             if bool(query_person):
                 print(item + ' ' + str(query_person.count))
-                fn = item + "_" + query_person[0].surname + "_" + query_person[0].name + "_" + query_person[0].middlename + "_" + query_person[0].street_addr
+                fn = item + "_" + query_person[0].surname + "_" + query_person[0].name + \
+                    "_" + query_person[0].middlename + \
+                    "_" + query_person[0].street_addr
                 # person_json = json.dump(query_person[0])
                 print(fn)
-                p_fio = query_person[0].surname + "_" + query_person[0].name + "_" + query_person[0].middlename
+                p_fio = query_person[0].surname + "_" + \
+                    query_person[0].name + "_" + query_person[0].middlename
                 p_addr = query_person[0].street_addr
-                p_lic_id  = item
-                p_email =  query_person[0].email
+                p_lic_id = item
+                p_email = query_person[0].email
                 person_json = {
-                    "fio" : p_fio,
-                    "address" : p_addr,
-                    "lic_id" : p_lic_id,
-                    "email" : p_email,
+                    "fio": p_fio,
+                    "address": p_addr,
+                    "lic_id": p_lic_id,
+                    "email": p_email,
                 }
 
+                # Запрашиваем файлы у которых есть такой лицевой счет
                 query_file = Files.select().where(Files.lic_id == item).execute()
                 if bool(query_person):
                     full_name_pdf_out = os.path.join(self.folder_pdf, fn)
@@ -250,26 +258,30 @@ class MainWindow(QMainWindow):
 
                     for fileitem in query_file:
                         str_from = fileitem.file_name
-                        str_file_out_name = os.path.basename(fileitem.file_name)
+                        str_file_out_name = os.path.basename(
+                            fileitem.file_name)
                         if os.path.isdir(full_name_pdf_out):
                             shutil.rmtree(full_name_pdf_out)
                         os.mkdir(full_name_pdf_out)
-                        str_out = os.path.join(full_name_pdf_out,  str_file_out_name)
-                        str_out_json = os.path.join(full_name_pdf_out, "info.json")
+                        str_out = os.path.join(
+                            full_name_pdf_out,  str_file_out_name)
+                        str_out_json = os.path.join(
+                            full_name_pdf_out, "info.json")
                         with open(str_out_json, 'w', encoding='utf-8') as f:
-                            json.dump(person_json, f, ensure_ascii=False, indent=4)
+                            json.dump(person_json, f,
+                                      ensure_ascii=False, indent=4)
                         #shutil.copy(str_from, str_out)
                         shutil.move(str_from, str_out)
 
-                        print(f"копируем из: {str_from} в: {str_out}" )
+                        print(f"копируем из: {str_from} в: {str_out}")
 
             else:
                 print("Файл для " + item + " - Не найден!")
         #lic_id_distinct = str(str_addr)
-        #print(lic_id_distinct)
-
+        # print(lic_id_distinct)
 
     ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
+
     def open_file_pdf(self):
         if os.path.isdir(cfg.FOLDER_DATA):
             folder_data_start = cfg.FOLDER_DATA
@@ -292,7 +304,7 @@ class MainWindow(QMainWindow):
 
         self.pdf_to_db()  # разбираем файл Excel
 
-        self.pdf_to_folders() #сортируем по папкам
+        self.pdf_to_folders()  # сортируем по папкам
 
 
 def make_gui():
