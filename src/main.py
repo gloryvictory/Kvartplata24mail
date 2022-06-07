@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
             # Load the xlsx file
             excel_data = pd.read_excel(
                 file_excel_full_path,  sheet_name=cfg.EXCEL_SHEET_NAME)
-            # Read the values of the file in the dataframe
+            # Read the values of the fivle in the dataframe
             data = pd.DataFrame(excel_data)
             print(data.columns)
 
@@ -337,7 +337,8 @@ def make_gui():
     app = QApplication(sys.argv)
     window = MainWindow()
     # window.setGeometry(150, 150, 360, 398)
-    # window.setWindowTitle("Qt Simple Example Tutorial")
+    window.setWindowTitle(
+        "Приложение для моей любимой Мулечки! Надеюсь поможет...")
     window.show()
     sys.exit(app.exec())
 

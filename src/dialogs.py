@@ -6,7 +6,7 @@ class CustomDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("!!!!!!")
+        self.setWindowTitle("Сортировка закончена успешно!")
 
         QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
 

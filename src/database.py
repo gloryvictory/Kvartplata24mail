@@ -1,7 +1,5 @@
 import os.path
-
-from peewee import *
-
+from peewee import SqliteDatabase, Model, CharField
 import config as cfg
 
 
