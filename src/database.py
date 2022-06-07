@@ -30,11 +30,6 @@ class Person(Model):
         database = db  # модель будет использовать базу данных 'people.db'
         db_table = 'Person'
 
-    # is_relative = BooleanField()
-    #created = peewee.DateField(default=datetime.date.today)
-    # create_time = DateTimeField(default=datetime.now)
-    # update_time = DateTimeField(default=datetime.now)
-
 
 class Files(Model):
     # Полный путь к файлу
@@ -55,3 +50,10 @@ class Files(Model):
     class Meta:
         database = db  # модель будет использовать базу данных 'people.db'
         db_table = 'Files'
+
+
+''' то что может пригодиться'''
+# is_relative = BooleanField()
+#created = peewee.DateField(default=datetime.date.today)
+# create_time = DateTimeField(default=datetime.now)
+# update_time = DateTimeField(default=datetime.now)
