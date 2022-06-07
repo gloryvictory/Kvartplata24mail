@@ -176,6 +176,188 @@
        </property>
       </widget>
      </widget>
+     <widget class="QWidget" name="tabMail">
+      <attribute name="title">
+       <string>Отправка почты</string>
+      </attribute>
+      <widget class="QGroupBox" name="gbServer">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>401</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Сервер SMTP:</string>
+       </property>
+       <widget class="QLabel" name="lblServer">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>49</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Server:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lblPort">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>49</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Port:</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="leServer">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>20</y>
+          <width>341</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lePort">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>50</y>
+          <width>341</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="geometry">
+        <rect>
+         <x>430</x>
+         <y>10</y>
+         <width>381</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>User:</string>
+       </property>
+       <widget class="QLabel" name="lblLogin">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>49</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Login:</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="leLogin">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>20</y>
+          <width>301</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lblPassword">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>61</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Password:</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lePassword">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>50</y>
+          <width>301</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QPushButton" name="btnMail">
+       <property name="geometry">
+        <rect>
+         <x>830</x>
+         <y>20</y>
+         <width>241</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Отправить</string>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>1061</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Сообщение:</string>
+       </property>
+       <widget class="QLineEdit" name="lineEdit">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>1041</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_6">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>1061</width>
+         <height>461</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Журнал:</string>
+       </property>
+       <widget class="QListWidget" name="lvLogMail">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>20</y>
+          <width>1051</width>
+          <height>431</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </widget>
      <widget class="QWidget" name="tabLog">
       <attribute name="title">
        <string>Журнал</string>
@@ -191,11 +373,6 @@
        </property>
       </widget>
      </widget>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Настройки</string>
-      </attribute>
-     </widget>
     </widget>
    </widget>
    <widget class="QProgressBar" name="pbMain">
@@ -208,7 +385,7 @@
      </rect>
     </property>
     <property name="value">
-     <number>1</number>
+     <number>0</number>
     </property>
    </widget>
   </widget>

@@ -26,7 +26,7 @@ from PySide6.QtWidgets import (
 from os import walk
 import subprocess
 
-#from peewee import *
+# from peewee import *
 from peewee import Table
 
 from database import Person, Files
@@ -228,7 +228,7 @@ class MainWindow(QMainWindow):
         query = Person.select(Person.lic_id).distinct().execute()
         for li in query:
             list_lic_id.append(li.lic_id)
-        #list_lic_id_sorted  = list_lic_id.sort()
+        # list_lic_id_sorted  = list_lic_id.sort()
         cnt_all = len(list_lic_id)
         self.ui.pbMain.setRange(1, cnt_all - 1)
         counter = 0
@@ -282,7 +282,7 @@ class MainWindow(QMainWindow):
                         with open(str_out_json, 'w', encoding='utf-8') as f:
                             json.dump(person_json, f,
                                       ensure_ascii=False, indent=4)
-                        #shutil.copy(str_from, str_out)
+                        # shutil.copy(str_from, str_out)
                         shutil.move(str_from, str_out)
                         self.ui.lvLog.addItem(
                             f"копируем из: {str_from} в: {str_out}")
@@ -293,20 +293,19 @@ class MainWindow(QMainWindow):
         dlg = CustomDialog()
         if dlg.exec():
             self.ui.lvLog.addItem("Сортировка закончена успешно!")
-            #print("Сортировка закончена успешно!")
+            # print("Сортировка закончена успешно!")
             FILEBROWSER_PATH = os.path.join(
                 os.getenv('WINDIR'), 'explorer.exe')
             if os.path.isfile(FILEBROWSER_PATH):
                 subprocess.Popen(
                     [FILEBROWSER_PATH, '/select,', os.path.normpath(folder_pdf_path)])
-                #subprocess.Popen(r'explorer /select, ' + folder_pdf_path)
+                # subprocess.Popen(r'explorer /select, ' + folder_pdf_path)
         else:
             print("Cancel!")
 
         self.ui.btnPDF.setEnabled(False)
-
-        #lic_id_distinct = str(str_addr)
-        # print(lic_id_distinct)
+        self.ui.tabOperations.setCurrentIndex(
+            self.ui.tabOperations.currentIndex() + 1)
 
     ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
 
