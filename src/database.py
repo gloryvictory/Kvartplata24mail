@@ -9,6 +9,7 @@ db = SqliteDatabase(cfg.DATABASE_NAME)
 
 
 class Person(Model):
+    street_addr = CharField(max_length=255, default="")  # адрес
     # Тип адреса улицы
     street_type = CharField(max_length=255, default="")
     street = CharField(max_length=255, default="")              # Улица
@@ -38,6 +39,7 @@ class Person(Model):
 class Files(Model):
     # Полный путь к файлу
     file_name = CharField(max_length=255, default="")
+    street_addr = CharField(max_length=255, default="")     # адрес
     street_type = CharField(max_length=255, default="")     # Тип адреса улицы
     street = CharField(max_length=255, default="")          # Улица
     home = CharField(max_length=255, default="")            # Дом

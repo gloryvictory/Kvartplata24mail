@@ -17,6 +17,7 @@ from time import strftime   # Load just the strftime Module from Time
 
 FOLDER_OUT_WIN = ''
 FOLDER_DATA = 'C:\\Glory\\Projects\\Python\\Kvartplata24mail\\data\\'
+# FOLDER_TO_MAIL = 'TO_MAIL'
 
 FILE_LOG_NAME = 'kvartplata24'
 FILE_LOG = str(strftime("%Y-%m-%d") + '_' + FILE_LOG_NAME + '.log')

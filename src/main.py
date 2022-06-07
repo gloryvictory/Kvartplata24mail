@@ -14,16 +14,20 @@
 # @echo off
 
 # C:\Glory\Projects\Python\Kvartplata24mail\data\Севастопольская
-
+import json
 import os
+import shutil
 import sys
 import logging
+import json
 from datetime import datetime
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QFileDialog, QListWidgetItem)
 from os import walk
 
 #from peewee import *
+from peewee import Table
+
 from database import Person, Files
 import pandas as pd
 
@@ -40,7 +44,7 @@ class MainWindow(QMainWindow):
         self.folder_base = ''                   # папка с Excel
         self.folder_pdf = ''                    # папка с pdf файлами
         self.ui.btnExcel.setEnabled(True)
-        # self.ui.btnPDF.setEnabled(False); # убрал для дебага  - потом раскомментировать
+        self.ui.btnPDF.setEnabled(False); # убрал для дебага  - потом раскомментировать
 
         self.ui.btnExcel.clicked.connect(self.open_file_excel)
         self.ui.btnPDF.clicked.connect(self.open_file_pdf)
@@ -84,6 +88,8 @@ class MainWindow(QMainWindow):
                     cnt_load += 1
                     one_person = Person()
                     # print(row['E-mail'], row['Имя'])
+                    str_adr = "д_" + str(row['Дом']) + "_" + str(row['Тип адреса Квартира']) + "_" + str(row['Квартира'])
+                    one_person.street_addr = str_adr.replace("/","_").replace(" ", "_")
                     one_person.street_type = row['Тип адреса улицы']
                     one_person.street = row['Улица']
                     one_person.home = row['Дом']
@@ -154,7 +160,6 @@ class MainWindow(QMainWindow):
         self.ui.btnPDF.setEnabled(True)
 
     ''' Берем Excel файл и заноси в sqlite базу только тех, у кого есть email '''
-
     def pdf_to_db(self):
         folder_pdf_path = self.folder_pdf
         if not os.path.isdir(folder_pdf_path):
@@ -167,10 +172,17 @@ class MainWindow(QMainWindow):
             self.ui.tabOperations.setCurrentIndex(
                 self.ui.tabOperations.currentIndex() + 1)
 
-            filenames = next(walk(folder_pdf_path), (None, None, []))[
-                2]  # [] if no file
+            #filenames = next(walk(folder_pdf_path), (None, None, []))[2]  # [] if no file
+            filenames = []
+            # r=root, d=directories, f = files
+            for r, d, f in os.walk(folder_pdf_path):
+                for file in f:
+                    if file.endswith(".pdf") or file.endswith(".PDF"):
+                        filenames.append(os.path.join(r, file))
+
             msg_str = f"Найдено PDF файлов: {str(len(filenames))} "
             self.ui.lvPDF.addItem(msg_str)
+            self.ui.lvLog.addItem(msg_str)
 
             one_file = Files()
             one_file.create_table()
@@ -188,36 +200,76 @@ class MainWindow(QMainWindow):
 
                 one_file.file_name = full_name
 
-                one_file.street_type = adr_array[0]  # Ул
-                adr_array.pop(0)
-
-                one_file.street = adr_array[0]  # Улица
-                adr_array.pop(0)
-
-                adr_array.pop(0)  # пропускаем букву д
-
-                adr_array.pop(0)  # пропускаем кв
-
-                one_file.flat = adr_array[0]  # квартира
-                adr_array.pop(0)
-
-                one_file.home = adr_array[0]
-                adr_array.pop(0)
-
-                # one_file.year
+                # Месяц
                 one_file.month = adr_array[len(adr_array) - 1]
                 adr_array.pop(len(adr_array) - 1)
-
+                # Год
                 one_file.year = "20" + adr_array[len(adr_array) - 1]
                 adr_array.pop(len(adr_array) - 1)
-
+                # Лицевой счет
                 one_file.lic_id = adr_array[len(adr_array) - 1]
                 adr_array.pop(len(adr_array) - 1)
+                # Адрес
+                str_addr = ' '.join(adr_array)
+                one_file.street_addr  = str_addr
 
                 one_file.save()
 
-    ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
 
+    def pdf_to_folders(self):
+        folder_pdf_path = self.folder_pdf
+        list_lic_id = []
+        query = Person.select(Person.lic_id).distinct().execute()
+        for li in query:
+            list_lic_id.append(li.lic_id)
+        #list_lic_id_sorted  = list_lic_id.sort()
+
+        for item in sorted(list_lic_id):
+            query_person = Person.select().where(Person.lic_id == item).execute()
+
+            if bool(query_person):
+                print(item + ' ' + str(query_person.count))
+                fn = item + "_" + query_person[0].surname + "_" + query_person[0].name + "_" + query_person[0].middlename + "_" + query_person[0].street_addr
+                # person_json = json.dump(query_person[0])
+                print(fn)
+                p_fio = query_person[0].surname + "_" + query_person[0].name + "_" + query_person[0].middlename
+                p_addr = query_person[0].street_addr
+                p_lic_id  = item
+                p_email =  query_person[0].email
+                person_json = {
+                    "fio" : p_fio,
+                    "address" : p_addr,
+                    "lic_id" : p_lic_id,
+                    "email" : p_email,
+                }
+
+                query_file = Files.select().where(Files.lic_id == item).execute()
+                if bool(query_person):
+                    full_name_pdf_out = os.path.join(self.folder_pdf, fn)
+                    print(full_name_pdf_out)
+
+                    for fileitem in query_file:
+                        str_from = fileitem.file_name
+                        str_file_out_name = os.path.basename(fileitem.file_name)
+                        if os.path.isdir(full_name_pdf_out):
+                            shutil.rmtree(full_name_pdf_out)
+                        os.mkdir(full_name_pdf_out)
+                        str_out = os.path.join(full_name_pdf_out,  str_file_out_name)
+                        str_out_json = os.path.join(full_name_pdf_out, "info.json")
+                        with open(str_out_json, 'w', encoding='utf-8') as f:
+                            json.dump(person_json, f, ensure_ascii=False, indent=4)
+                        #shutil.copy(str_from, str_out)
+                        shutil.move(str_from, str_out)
+
+                        print(f"копируем из: {str_from} в: {str_out}" )
+
+            else:
+                print("Файл для " + item + " - Не найден!")
+        #lic_id_distinct = str(str_addr)
+        #print(lic_id_distinct)
+
+
+    ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
     def open_file_pdf(self):
         if os.path.isdir(cfg.FOLDER_DATA):
             folder_data_start = cfg.FOLDER_DATA
@@ -232,9 +284,15 @@ class MainWindow(QMainWindow):
         self.ui.lvLog.addItem(f"Указан файл PDF: {fname}")
 
         self.folder_pdf = os.path.dirname(fname)
+
+        # self.folder_pdf_out = os.path.join(self.folder_pdf, cfg.FOLDER_TO_MAIL)
+        # self.ui.lvLog.addItem(f"Определена пака для вывода файлов PDF после сортировки: {self.folder_pdf_out}")
+        #
         self.ui.lePDF.setText(self.folder_pdf)
 
         self.pdf_to_db()  # разбираем файл Excel
+
+        self.pdf_to_folders() #сортируем по папкам
 
 
 def make_gui():
