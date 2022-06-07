@@ -26,7 +26,6 @@ from PySide6.QtWidgets import (
 from os import walk
 import subprocess
 
-# from peewee import *
 from peewee import Table
 
 from database import Person, Files
@@ -358,15 +357,15 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # self.set_logger()
-    # def set_logger(self):
-    #     for handler in logging.root.handlers[:]:  # Remove all handlers associated with the root logger object.
-    #         logging.root.removeHandler(handler)
-    #     # dir_out = get_output_directory()
-    #     # file_log = str(os.path.join(dir_out, cfg.file_log))  # from cfg.file
-    #     file_log = cfg.FILE_LOG
-    #     if os.path.isfile(file_log):  # Если выходной LOG файл существует - удаляем его
-    #         os.remove(file_log)
-    #     logging.basicConfig(filename=file_log, format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO,
-    #                         filemode='w')
-    #     logging.info(file_log)
+# self.set_logger()
+# def set_logger(self):
+#     for handler in logging.root.handlers[:]:  # Remove all handlers associated with the root logger object.
+#         logging.root.removeHandler(handler)
+#     # dir_out = get_output_directory()
+#     # file_log = str(os.path.join(dir_out, cfg.file_log))  # from cfg.file
+#     file_log = cfg.FILE_LOG
+#     if os.path.isfile(file_log):  # Если выходной LOG файл существует - удаляем его
+#         os.remove(file_log)
+#     logging.basicConfig(filename=file_log, format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO,
+#                         filemode='w')
+#     logging.info(file_log)
