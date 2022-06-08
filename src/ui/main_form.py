@@ -25,7 +25,7 @@ class Ui_frmMain(object):
     def setupUi(self, frmMain):
         if not frmMain.objectName():
             frmMain.setObjectName(u"frmMain")
-        frmMain.resize(750, 550)
+        frmMain.resize(750, 617)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -71,6 +71,16 @@ class Ui_frmMain(object):
 
 
         self.verticalLayout_2.addWidget(self.groupBox_2)
+
+        self.btnDoBySurname = QPushButton(self.centralwidget)
+        self.btnDoBySurname.setObjectName(u"btnDoBySurname")
+
+        self.verticalLayout_2.addWidget(self.btnDoBySurname)
+
+        self.pushButton = QPushButton(self.centralwidget)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.verticalLayout_2.addWidget(self.pushButton)
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -213,7 +223,7 @@ class Ui_frmMain(object):
 
         self.retranslateUi(frmMain)
 
-        self.tabOperations.setCurrentIndex(0)
+        self.tabOperations.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(frmMain)
@@ -228,6 +238,8 @@ class Ui_frmMain(object):
         self.groupBox_2.setTitle(QCoreApplication.translate("frmMain", u"\u041f\u0430\u043f\u043a\u0430 \u0441 PDF \u0444\u0430\u0439\u043b\u0430\u043c\u0438:", None))
         self.lePDF.setText(QCoreApplication.translate("frmMain", u"\u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u043a\u043d\u043e\u043f\u043a\u0443 \"\u041e\u0442\u043a\u0440\u044b\u0442\u044c\" \u0438 \u0443\u043a\u0430\u0436\u0438\u0442\u0435 \u0433\u0434\u0435 \u043b\u0435\u0436\u0430\u0442 \u0444\u0430\u0439\u043b\u044b pdf", None))
         self.btnPDF.setText(QCoreApplication.translate("frmMain", u"\u041e\u0442\u043a\u0440\u044b\u0442\u044c", None))
+        self.btnDoBySurname.setText(QCoreApplication.translate("frmMain", u"\u0420\u0430\u0437\u043e\u0431\u0440\u0430\u0442\u044c \u043f\u043e \u0424\u0430\u043c\u0438\u043b\u0438\u0438 \u0418\u043c\u0435\u043d\u0438 \u041e\u0442\u0447\u0435\u0441\u0442\u0432\u0443", None))
+        self.pushButton.setText(QCoreApplication.translate("frmMain", u"\u0420\u0430\u0437\u043e\u0431\u0440\u0430\u0442\u044c \u043f\u043e \u041b\u0438\u0446\u0435\u0432\u044b\u043c \u0441\u0447\u0435\u0442\u0430\u043c", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("frmMain", u"\u041e\u043f\u0435\u0440\u0430\u0446\u0438\u0438", None))
         self.tabOperations.setTabText(self.tabOperations.indexOf(self.tabExcel), QCoreApplication.translate("frmMain", u"Excel", None))
         self.tabOperations.setTabText(self.tabOperations.indexOf(self.tabPDF), QCoreApplication.translate("frmMain", u"PDF", None))

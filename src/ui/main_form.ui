@@ -92,7 +92,7 @@
     <item>
      <widget class="QPushButton" name="pushButton">
       <property name="text">
-       <string>PushButton</string>
+       <string>Разобрать по Лицевым счетам</string>
       </property>
      </widget>
     </item>
