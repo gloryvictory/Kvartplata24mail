@@ -57,6 +57,14 @@ class MainWindow(QMainWindow):
 
     def excel_to_db(self):
         file_excel_full_path = self.folder_excel_fullpath
+
+        # Создаем файлик люди_без_почты.txt
+        file_users_no_email_full_path = os.path.join(
+            os.path.dirname(file_excel_full_path), "люди_без_почты.txt")
+
+        if os.path.isfile(file_users_no_email_full_path):
+            os.remove(file_users_no_email_full_path)
+
         if not os.path.isfile(file_excel_full_path):
             msg_str = f"file doesn't  exist {file_excel_full_path}"
             logging.info(msg_str)
@@ -83,6 +91,7 @@ class MainWindow(QMainWindow):
             self.ui.pbMain.setRange(1, cnt_all - 1)
 
             print("COUNT = " + str(cnt_all))
+            list_user_no_email = []
             for index, row in data.iterrows():
                 tmp_str = str(row['E-mail'])
                 # Выбираем всех, у кого есть почта
@@ -110,22 +119,36 @@ class MainWindow(QMainWindow):
                     one_person.save()
 
                 else:
+                    # Вычленяем тех людей, у которых нет EMAIL
                     cnt_missed += 1
                     msg_str = str(row['Фамилия']).strip().upper(
                     ) + " " + str(row['Имя']).strip().upper() + " " + str(row['Отчество']).strip().upper()
-                    self.ui.lvLog.addItem(f"Нет EMAIL у:  {msg_str} ")
 
-                # сдвигаем прогресс бар
-                self.ui.pbMain.setValue(cnt_load + cnt_missed)
+                    # если надо с лицевым счетом
+                    # + " " + str(row['Номер лицевого счета']).strip()  #
+                    list_user_no_email.append(msg_str)
+
+            # записываем всех людей без почты в файлик
+            with open(file_users_no_email_full_path, 'a') as f:
+                list_out = set(list_user_no_email)  # список людей без почты
+                for item in list_out:
+                    self.ui.lvLog.addItem(f"Нет EMAIL у:  {item} ")
+                    if not item.count('\n'):
+                        item = item + '\n'
+                    f.write(item)
+                f.close()
+
+            # сдвигаем прогресс бар
+            self.ui.pbMain.setValue(cnt_load + cnt_missed)
 
             self.ui.lvExcel.addItem(
-                f"Найдено, что у {cnt_missed} пользователей нет EMAIL")
+                f"Найдено, что у {cnt_missed} собственников нет EMAIL")
             self.ui.lvExcel.addItem(
-                f"В Базу загружено {cnt_load} пользователей, у которых есть EMAIL")
+                f"В Базу загружено {cnt_load} собственников, у которых есть EMAIL")
             self.ui.lvLog.addItem(
-                f"Найдено, что у {cnt_missed} пользователей нет EMAIL")
+                f"Найдено, что у {cnt_missed} собственников нет EMAIL")
             self.ui.lvLog.addItem(
-                f"В Базу загружено {cnt_load} пользователей, у которых есть EMAIL")
+                f"В Базу загружено {cnt_load} собственников, у которых есть EMAIL")
 
             # Print the content
             # print("The content of the file is:\n", data)
