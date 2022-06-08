@@ -27,10 +27,10 @@ DATABASE_NAME = 'people.db'
 
 EXCEL_SHEET_NAME = 'Персональные данные'
 
-SMTP_HOST = ''
-SMTP_PORT = ''
-SMTP_USER = ''
-SMTP_PASSWORD = ''
+SMTP_HOST = 'smtp.mail.ru'
+SMTP_PORT = '465'
+SMTP_USER = 'kvartplata2472@mail.ru'
+SMTP_PASSWORD = '8EqamG3x9Mv8ktpnksKm'
 
 
 #FILE_CSV = str(time.strftime("%Y-%m-%d") + "_shp" + ".csv")

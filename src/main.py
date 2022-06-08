@@ -17,9 +17,23 @@
 import json
 import os
 import shutil
+
 import sys
 import logging
 import json
+
+import smtplib
+import ssl
+import email
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.application import MIMEApplication
+
+import pendulum
+from datetime import date
 from datetime import datetime
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QFileDialog, QListWidgetItem)
@@ -34,6 +48,15 @@ from dialogs import CustomDialog
 
 from ui.main_form import Ui_frmMain
 import config as cfg
+
+def get_month_in_russian():
+    today = date.today()
+    month_list = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь',
+           'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь']
+    date_list = today.split('.')
+    return (month_list[int(date_list[1]) - 1] + ' ' )
+
+
 
 
 class MainWindow(QMainWindow):
@@ -54,6 +77,14 @@ class MainWindow(QMainWindow):
         self.ui.btnPDF.clicked.connect(self.open_file_pdf)
         self.ui.btnDoByLicID.clicked.connect(self.pdf_to_folders_by_lic_id)
         self.ui.btnDoByFIO.clicked.connect(self.pdf_to_folders_by_fio)
+        self.ui.btnMail.clicked.connect(self.send_mail)
+
+        self.ui.leServer.setText(cfg.SMTP_HOST)
+        self.ui.lePort.setText(cfg.SMTP_PORT)
+        self.ui.leLogin.setText(cfg.SMTP_USER)
+        self.ui.lePassword.setText(cfg.SMTP_PASSWORD)
+
+
 
         # self.ui.progressBar.setRange(0, 100)
 
@@ -416,6 +447,81 @@ class MainWindow(QMainWindow):
         self.ui.btnDoByLicID.setEnabled(True)
         self.ui.btnDoByFIO.setEnabled(True)
         # self.pdf_to_folders_by_lic_id()  # сортируем по папкам по лицевому счету
+
+
+    def send_mail(self):
+
+        sender_email = self.ui.leLogin.text()
+        receiver_email = self.ui.leLogin.text()
+        body = 'Привет всем!!!'
+        today = date.today()
+        msg = MIMEMultipart()
+        msg['Subject'] = 'Квитанции за месяц ' + str(today.month) + get_month_in_russian() # получаем текущую дату 'Июнь'
+        msg['From'] = sender_email
+        msg['To'] = receiver_email
+
+        # msgText = MIMEText('<b>%s</b>' % (body), 'html')
+        # msg.attach(msgText)
+        #
+        # pdf = MIMEApplication(open("c:\\TEMP\\test.pdf", 'rb').read())
+        # pdf.add_header('Content-Disposition', 'attachment', filename="test.pdf")
+        # msg.attach(pdf)
+
+        # HTML Message Part
+        html = """\
+        <html>
+          <body>
+            <p><b>Квитанции от АО «2МЕН ГРУПП»</b>
+            <br>
+               Пожалуйста смотрите файлы во вложении<br>
+            </p>
+          </body>
+        </html>
+        """
+        part = MIMEText(html, "html")
+        msg.attach(part)
+
+        # Add Attachment
+        filename = "c:\\TEMP\\test.pdf"
+        with open(filename, "rb") as attachment:
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        # Set mail headers
+        part.add_header(
+            "Content-Disposition",
+            "attachment", filename=filename
+        )
+        msg.attach(part)
+
+        # Add Attachment
+        filename = "c:\\TEMP\\test2.pdf"
+        with open(filename, "rb") as attachment:
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        # Set mail headers
+        part.add_header(
+            "Content-Disposition",
+            "attachment", filename=filename
+        )
+        msg.attach(part)
+
+
+
+
+
+        try:
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL(self.ui.leServer.text(), self.ui.lePort.text(), context=context) as mailsender:
+                #mailsender.ehlo()
+                #mailsender.starttls()
+                mailsender.login(self.ui.leLogin.text(), self.ui.lePassword.text())
+                mailsender.sendmail(sender_email, receiver_email, msg.as_string())
+                mailsender.close()
+
+        except Exception as e:
+            print(e)
 
 
 def make_gui():
