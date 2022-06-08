@@ -366,6 +366,13 @@ class MainWindow(QMainWindow):
                         fn_in = file.file_name
                         shutil.move(fn_in, dirname_full_out)
                         print(fn_in)
+                person_json = \
+                    {
+                        "fio": p_fio,
+                        "address": p_addr,
+                        "lic_id": p_lic_id,
+                        "email": p_email,
+                    }
 
     """--------------------------------------"""
     ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
