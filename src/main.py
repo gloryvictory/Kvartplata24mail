@@ -54,8 +54,8 @@ def get_month_in_russian():
     month_list = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь',
            'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь']
     date_list = today.split('.')
-    return (month_list[int(date_list[1]) - 1] + ' ' )
-
+    return (month_list[int(date_list[1]) - 1] + ' ' +
+            date_list[2] + ' года')
 
 
 
