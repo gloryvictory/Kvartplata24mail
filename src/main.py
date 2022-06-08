@@ -47,6 +47,8 @@ class MainWindow(QMainWindow):
         self.ui.btnExcel.setEnabled(True)
         # убрал для дебага  - потом раскомментировать
         self.ui.btnPDF.setEnabled(False)
+        self.ui.btnDoByLicID.setEnabled(False)
+        self.ui.btnDoByFIO.setEnabled(False)
 
         self.ui.btnExcel.clicked.connect(self.open_file_excel)
         self.ui.btnPDF.clicked.connect(self.open_file_pdf)
@@ -366,6 +368,12 @@ class MainWindow(QMainWindow):
                         fn_in = file.file_name
                         shutil.move(fn_in, dirname_full_out)
                         print(fn_in)
+
+                p_fio = str(person_one.surname) + " " +str(person_one.name) + " " +str(person_one.middlename)
+                p_addr = str(person_one.street_addr)
+                p_lic_id = str(person_one.lic_id)
+                p_email = str(person_one.email)
+
                 person_json = \
                     {
                         "fio": p_fio,
@@ -373,6 +381,12 @@ class MainWindow(QMainWindow):
                         "lic_id": p_lic_id,
                         "email": p_email,
                     }
+                str_out_json = os.path.join(
+                    dirname_full_out, "info.json")
+
+                with open(str_out_json, 'a', encoding='utf-8') as f:
+                    json.dump(person_json, f,
+                              ensure_ascii=False, indent=4)
 
     """--------------------------------------"""
     ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
@@ -398,7 +412,9 @@ class MainWindow(QMainWindow):
         self.ui.lePDF.setText(self.folder_pdf)
 
         self.pdf_to_db()  # разбираем файл Excel
-
+        self.ui.btnPDF.setEnabled(False)
+        self.ui.btnDoByLicID.setEnabled(True)
+        self.ui.btnDoByFIO.setEnabled(True)
         # self.pdf_to_folders_by_lic_id()  # сортируем по папкам по лицевому счету
 
 
