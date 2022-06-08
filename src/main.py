@@ -336,22 +336,36 @@ class MainWindow(QMainWindow):
         folder_pdf_path = self.folder_pdf
         # list_lic_id = []
 
-        query = (Person
-                 .select(Person.surname, Person.name, Person.middlename, Person.lic_id, Person.street_addr, Person.email)
-                 .group_by(Person.lic_id)
-                 .order_by(Person.lic_id)
-                 .execute()
-                 )
+        # Запрашиваем всех и группируем по лицевому счету
+        query_person = (Person
+                        .select(Person.surname, Person.name, Person.middlename, Person.lic_id, Person.street_addr, Person.email)
+                        .group_by(Person.lic_id)
+                        .order_by(Person.lic_id)
+                        .execute()
+                        )
 
-        for person in query:
-            # print(f"сортируем по ФИО! {li.surname}")
-            query_files = Files.select().where(Files.lic_id == person.lic_id).execute()
-            print(' найдено: ' + str(query_files.count))
-            if bool(query_files):
-                for file in query_files:
-                    print(person.surname + ' ' + str(file.file_name))
-                    fn = file.file_name
-                    print(fn)
+        if bool(query_person):
+            for person_one in query_person:
+                # print(f"сортируем по ФИО! {li.surname}")
+                f1 = str(person_one.surname).strip()
+                i1 = str(person_one.name).strip()
+                o1 = str(person_one.middlename).strip()
+                dirname = f"{f1}_{i1}_{o1}"
+
+                dirname_full_out = os.path.join(
+                    folder_pdf_path, dirname)
+                print(dirname_full_out)
+                if not os.path.isdir(dirname_full_out):
+                    os.mkdir(dirname_full_out)
+
+                query_files = Files.select().where(Files.lic_id == person_one.lic_id).execute()
+                # print(' найдено: ' + str(query_files.count))
+                if bool(query_files):
+                    for file in query_files:
+                        #print(person_one.surname + ' ' + str(file.file_name))
+                        fn_in = file.file_name
+                        shutil.move(fn_in, dirname_full_out)
+                        print(fn_in)
 
     """--------------------------------------"""
     ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
