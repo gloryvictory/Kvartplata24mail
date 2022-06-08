@@ -8,9 +8,9 @@ class CustomDialog(QDialog):
 
         self.setWindowTitle("Сортировка закончена успешно!")
 
-        QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        qbtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
 
-        self.buttonBox = QDialogButtonBox(QBtn)
+        self.buttonBox = QDialogButtonBox(qbtn)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 

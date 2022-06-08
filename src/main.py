@@ -50,6 +50,8 @@ class MainWindow(QMainWindow):
 
         self.ui.btnExcel.clicked.connect(self.open_file_excel)
         self.ui.btnPDF.clicked.connect(self.open_file_pdf)
+        self.ui.btnDoByLicID.clicked.connect(self.pdf_to_folders_by_lic_id)
+        self.ui.btnDoByFIO.clicked.connect(self.pdf_to_folders_by_fio)
 
         # self.ui.progressBar.setRange(0, 100)
 
@@ -57,18 +59,19 @@ class MainWindow(QMainWindow):
 
     def excel_to_db(self):
         file_excel_full_path = self.folder_excel_fullpath
-
+        self.folder_base = os.path.dirname(
+            file_excel_full_path)  # Запомнили где лежит Excel !!
         # Создаем файлик люди_без_почты.txt
         file_users_no_email_full_path = os.path.join(
-            os.path.dirname(file_excel_full_path), "люди_без_почты.txt")
+            self.folder_base, "люди_без_почты.txt")
 
         if os.path.isfile(file_users_no_email_full_path):
             os.remove(file_users_no_email_full_path)
 
         if not os.path.isfile(file_excel_full_path):
-            msg_str = f"file doesn't  exist {file_excel_full_path}"
+            msg_str = f"Нету файла: {file_excel_full_path}"
             logging.info(msg_str)
-            print(msg_str)
+            # print(msg_str)
             self.ui.lvLog.addItem(msg_str)
 
         if os.path.isfile(file_excel_full_path):
@@ -79,7 +82,7 @@ class MainWindow(QMainWindow):
                 file_excel_full_path,  sheet_name=cfg.EXCEL_SHEET_NAME)
             # Read the values of the fivle in the dataframe
             data = pd.DataFrame(excel_data)
-            print(data.columns)
+            # print(data.columns)
 
             # print(data.count()) # выводит статистику по файлу Excel
             # msg_str = str(data.count())
@@ -169,9 +172,7 @@ class MainWindow(QMainWindow):
         fname1, _ = QFileDialog.getOpenFileName(self,
                                                 "Open Excel File", folder_data_start, "Excel Files (*.xlsx)")
         fname = os.path.normpath(fname1)
-
         self.ui.lvLog.addItem(f"Указан файл Excel: {fname}")
-
         self.folder_excel_fullpath = fname
 
         # это на случай сохранения sqlite базы в папке с файликом Excel
@@ -179,7 +180,6 @@ class MainWindow(QMainWindow):
         # self.folder_base = os.path.dirname(fname)
         # file_db = os.path.join(self.folder_base, filename_without_ext + '.db')
         # self.ui.lvLog.addItem(f"Установлен файл sqlite: {file_db}")
-
         self.ui.leExcel.setText(fname)
 
         self.excel_to_db()  # разбираем файл Excel
@@ -187,12 +187,13 @@ class MainWindow(QMainWindow):
         self.ui.btnExcel.setEnabled(False)
         self.ui.btnPDF.setEnabled(True)
 
+# -------------------------- начинаем работать с PDF -----------------------------------------------------------
     ''' Берем Excel файл и заноси в sqlite базу только тех, у кого есть email '''
 
     def pdf_to_db(self):
         folder_pdf_path = self.folder_pdf
         if not os.path.isdir(folder_pdf_path):
-            msg_str = f"Folder with PDF files doesn't  exist {folder_pdf_path}"
+            msg_str = f"В папке нет файлов PDF {folder_pdf_path}"
             logging.info(msg_str)
             print(msg_str)
             self.ui.lvLog.addItem(msg_str)
@@ -200,8 +201,6 @@ class MainWindow(QMainWindow):
             # self.ui.btnPDF.setEnabled(False);
             self.ui.tabOperations.setCurrentIndex(
                 self.ui.tabOperations.currentIndex() + 1)
-
-            # filenames = next(walk(folder_pdf_path), (None, None, []))[2]  # [] if no file
             filenames = []
             # r=root, d=directories, f = files
             for r, d, f in os.walk(folder_pdf_path):
@@ -244,7 +243,9 @@ class MainWindow(QMainWindow):
 
                 one_file.save()
 
-    def pdf_to_folders(self):
+    """------------- сортируем по лицевому счету -------------------------"""
+
+    def pdf_to_folders_by_lic_id(self):
         folder_pdf_path = self.folder_pdf
         list_lic_id = []
         query = Person.select(Person.lic_id).distinct().execute()
@@ -329,6 +330,30 @@ class MainWindow(QMainWindow):
         self.ui.tabOperations.setCurrentIndex(
             self.ui.tabOperations.currentIndex() + 1)
 
+    """------------- сортируем по ФИО -------------------------"""
+
+    def pdf_to_folders_by_fio(self):
+        folder_pdf_path = self.folder_pdf
+        # list_lic_id = []
+
+        query = (Person
+                 .select(Person.surname, Person.name, Person.middlename, Person.lic_id, Person.street_addr, Person.email)
+                 .group_by(Person.lic_id)
+                 .order_by(Person.lic_id)
+                 .execute()
+                 )
+
+        for person in query:
+            # print(f"сортируем по ФИО! {li.surname}")
+            query_files = Files.select().where(Files.lic_id == person.lic_id).execute()
+            print(' найдено: ' + str(query_files.count))
+            if bool(query_files):
+                for file in query_files:
+                    print(person.surname + ' ' + str(file.file_name))
+                    fn = file.file_name
+                    print(fn)
+
+    """--------------------------------------"""
     ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
 
     def open_file_pdf(self):
@@ -353,7 +378,7 @@ class MainWindow(QMainWindow):
 
         self.pdf_to_db()  # разбираем файл Excel
 
-        self.pdf_to_folders()  # сортируем по папкам
+        # self.pdf_to_folders_by_lic_id()  # сортируем по папкам по лицевому счету
 
 
 def make_gui():

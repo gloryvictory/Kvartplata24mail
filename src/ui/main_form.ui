@@ -62,6 +62,13 @@
        <string>Папка с PDF файлами:</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="1">
+        <widget class="QPushButton" name="btnPDF">
+         <property name="text">
+          <string>Открыть</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLineEdit" name="lePDF">
          <property name="text">
@@ -72,27 +79,20 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="btnPDF">
-         <property name="text">
-          <string>Открыть</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="btnDoBySurname">
+     <widget class="QPushButton" name="btnDoByFIO">
       <property name="text">
-       <string>Разобрать по Фамилии Имени Отчеству</string>
+       <string>Разобрать по &quot;Фамилии Имени Отчеству&quot;</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="btnDoByLicID">
       <property name="text">
-       <string>Разобрать по Лицевым счетам</string>
+       <string>Разобрать по &quot;Лицевому счету&quot;</string>
       </property>
      </widget>
     </item>
