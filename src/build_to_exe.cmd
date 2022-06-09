@@ -1,0 +1,1 @@
+pyinstaller --noconfirm --log-level=WARN --onefile -w --name=Kvartplata24mail src\main.py

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>frmMain</class>
+ <widget class="QMainWindow" name="frmMain">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>617</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>750</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Программа</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Файл Excel</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="leExcel">
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="text">
+          <string>Нажмите кнопку &quot;Открыть&quot; и укажите где лежит &quot;Excel&quot; с данными пользователей</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="btnExcel">
+         <property name="text">
+          <string>Открыть</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Папка с PDF файлами:</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="1">
+        <widget class="QPushButton" name="btnPDF">
+         <property name="text">
+          <string>Открыть</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="lePDF">
+         <property name="text">
+          <string>Нажмите кнопку &quot;Открыть&quot; и укажите где лежат файлы pdf</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btnDoByFIO">
+      <property name="text">
+       <string>Разобрать по &quot;Фамилии Имени Отчеству&quot;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btnDoByLicID">
+      <property name="text">
+       <string>Разобрать по &quot;Лицевому счету&quot;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>Операции</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
+          <widget class="QTabWidget" name="tabOperations">
+           <property name="currentIndex">
+            <number>2</number>
+           </property>
+           <property name="movable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="tabExcel">
+            <attribute name="title">
+             <string>Excel</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="0" column="0">
+              <widget class="QListWidget" name="lvExcel"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabPDF">
+            <attribute name="title">
+             <string>PDF</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_6">
+             <item row="0" column="0">
+              <widget class="QListWidget" name="lvPDF"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabMail">
+            <attribute name="title">
+             <string>Отправка почты</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_9">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_8">
+               <item row="5" column="0">
+                <widget class="QPushButton" name="btnMail">
+                 <property name="text">
+                  <string>Отправить</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QGroupBox" name="groupBox_4">
+                 <property name="title">
+                  <string>User:</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_10">
+                  <item row="1" column="0">
+                   <widget class="QLineEdit" name="leLogin"/>
+                  </item>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="lblLogin">
+                    <property name="text">
+                     <string>Login:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="lblPassword">
+                    <property name="text">
+                     <string>Password:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLineEdit" name="lePassword"/>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QGroupBox" name="gbServer">
+                 <property name="title">
+                  <string>Сервер SMTP:</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_11">
+                  <item row="3" column="1">
+                   <widget class="QLineEdit" name="lePort"/>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLabel" name="lblPort">
+                    <property name="text">
+                     <string>Port:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="leServer"/>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="lblServer">
+                    <property name="text">
+                     <string>Server:</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="6" column="0">
+                <spacer name="verticalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabLog">
+            <attribute name="title">
+             <string>Журнал</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_7">
+             <item row="0" column="0">
+              <widget class="QListWidget" name="lvLog"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="pbMain">
+      <property name="value">
+       <number>0</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -32,7 +32,8 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.mime.application import MIMEApplication
 
-import pendulum
+from time import strftime
+
 from datetime import date
 from datetime import datetime
 from PySide6.QtWidgets import (
@@ -49,14 +50,14 @@ from dialogs import CustomDialog
 from ui.main_form import Ui_frmMain
 import config as cfg
 
+
 def get_month_in_russian():
-    today = date.today()
+    today = strftime("%d.%m.%Y")
     month_list = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь',
-           'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь']
+                  'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь']
     date_list = today.split('.')
     return (month_list[int(date_list[1]) - 1] + ' ' +
             date_list[2] + ' года')
-
 
 
 class MainWindow(QMainWindow):
@@ -77,14 +78,12 @@ class MainWindow(QMainWindow):
         self.ui.btnPDF.clicked.connect(self.open_file_pdf)
         self.ui.btnDoByLicID.clicked.connect(self.pdf_to_folders_by_lic_id)
         self.ui.btnDoByFIO.clicked.connect(self.pdf_to_folders_by_fio)
-        self.ui.btnMail.clicked.connect(self.send_mail)
+        self.ui.btnMail.clicked.connect(self.btn_clicked_send_mail)
 
         self.ui.leServer.setText(cfg.SMTP_HOST)
         self.ui.lePort.setText(cfg.SMTP_PORT)
         self.ui.leLogin.setText(cfg.SMTP_USER)
         self.ui.lePassword.setText(cfg.SMTP_PASSWORD)
-
-
 
         # self.ui.progressBar.setRange(0, 100)
 
@@ -177,10 +176,6 @@ class MainWindow(QMainWindow):
             # сдвигаем прогресс бар
             self.ui.pbMain.setValue(cnt_load + cnt_missed)
 
-            self.ui.lvExcel.addItem(
-                f"Найдено, что у {cnt_missed} собственников нет EMAIL")
-            self.ui.lvExcel.addItem(
-                f"В Базу загружено {cnt_load} собственников, у которых есть EMAIL")
             self.ui.lvLog.addItem(
                 f"Найдено, что у {cnt_missed} собственников нет EMAIL")
             self.ui.lvLog.addItem(
@@ -232,8 +227,6 @@ class MainWindow(QMainWindow):
             self.ui.lvLog.addItem(msg_str)
         else:
             # self.ui.btnPDF.setEnabled(False);
-            self.ui.tabOperations.setCurrentIndex(
-                self.ui.tabOperations.currentIndex() + 1)
             filenames = []
             # r=root, d=directories, f = files
             for r, d, f in os.walk(folder_pdf_path):
@@ -242,7 +235,6 @@ class MainWindow(QMainWindow):
                         filenames.append(os.path.join(r, file))
 
             msg_str = f"Найдено PDF файлов: {str(len(filenames))} "
-            self.ui.lvPDF.addItem(msg_str)
             self.ui.lvLog.addItem(msg_str)
 
             one_file = Files()
@@ -252,15 +244,11 @@ class MainWindow(QMainWindow):
                 msg_str = ff
                 full_name = os.path.join(folder_pdf_path, ff)
                 self.ui.lvLog.addItem(msg_str)
-
                 filename_without_ext = str(
                     os.path.splitext(os.path.basename(ff))[0])
                 adr_array = filename_without_ext.split('_')
-
                 one_file = Files()
-
                 one_file.file_name = full_name
-
                 # Месяц
                 one_file.month = adr_array[len(adr_array) - 1]
                 adr_array.pop(len(adr_array) - 1)
@@ -357,11 +345,10 @@ class MainWindow(QMainWindow):
                     [FILEBROWSER_PATH, '/select,', os.path.normpath(folder_pdf_path)])
                 # subprocess.Popen(r'explorer /select, ' + folder_pdf_path)
         else:
-            print("Cancel!")
+            self.ui.lvLog.addItem(
+                f"Сортировка файлов PDF закончена!")
 
         self.ui.btnPDF.setEnabled(False)
-        self.ui.tabOperations.setCurrentIndex(
-            self.ui.tabOperations.currentIndex() + 1)
 
     """------------- сортируем по ФИО -------------------------"""
 
@@ -400,7 +387,8 @@ class MainWindow(QMainWindow):
                         shutil.move(fn_in, dirname_full_out)
                         print(fn_in)
 
-                p_fio = str(person_one.surname) + " " +str(person_one.name) + " " +str(person_one.middlename)
+                p_fio = str(person_one.surname) + " " + \
+                    str(person_one.name) + " " + str(person_one.middlename)
                 p_addr = str(person_one.street_addr)
                 p_lic_id = str(person_one.lic_id)
                 p_email = str(person_one.email)
@@ -418,6 +406,22 @@ class MainWindow(QMainWindow):
                 with open(str_out_json, 'a', encoding='utf-8') as f:
                     json.dump(person_json, f,
                               ensure_ascii=False, indent=4)
+
+        dlg = CustomDialog()
+        if dlg.exec():
+            self.ui.lvLog.addItem("Сортировка закончена успешно!")
+            # print("Сортировка закончена успешно!")
+            FILEBROWSER_PATH = os.path.join(
+                os.getenv('WINDIR'), 'explorer.exe')
+            if os.path.isfile(FILEBROWSER_PATH):
+                subprocess.Popen(
+                    [FILEBROWSER_PATH, '/select,', os.path.normpath(folder_pdf_path)])
+                # subprocess.Popen(r'explorer /select, ' + folder_pdf_path)
+        else:
+            self.ui.lvLog.addItem(
+                f"Сортировка файлов PDF закончена!")
+
+        self.ui.btnPDF.setEnabled(False)
 
     """--------------------------------------"""
     ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
@@ -448,24 +452,44 @@ class MainWindow(QMainWindow):
         self.ui.btnDoByFIO.setEnabled(True)
         # self.pdf_to_folders_by_lic_id()  # сортируем по папкам по лицевому счету
 
+    def btn_clicked_send_mail(self):
+        # receiver_mail = self.ui.leLogin.text()
+        # attachement_files = ['c:\\TEMP\\test.pdf', 'c:\\TEMP\\test2.pdf']
 
-    def send_mail(self):
+        # if len(receiver_mail):
+        #     self.send_mail(receiver_mail, attachement_files)
+        print(self.folder_pdf)
+        fname = ''
+        if len(self.folder_pdf) < 2:
+            self.ui.lvLog.addItem(f"Не указана папка с файлами PDF!")
+            fname1, _ = QFileDialog.getOpenFileName(self,
+                                                    "Open JSON File", "/", "JSON Files (*.json)")
+            fname = os.path.normpath(fname1)
+            if len(fname1) == 0:
+                self.ui.lvLog.addItem(f"НЕ Указали файл JSON!!!")
+                return
 
+        self.ui.lvLog.addItem(f"Указан файл JSON: {fname}")
+        #self.folder_excel_fullpath = fname
+        self.folder_pdf = os.path.dirname(os.path.dirname(fname))
+        self.ui.lvLog.addItem(f"Указан: {self.folder_pdf}")
+        filenames = []
+        # r=root, d=directories, f = files
+        for r, d, f in os.walk(self.folder_pdf):
+            for file in f:
+                if str(file).lower() == 'info.json':
+                    fullname = os.path.join(r, file)
+                    filenames.append(fullname)
+                    self.ui.lvLog.addItem(f"Найден: {fullname}")
+
+    def send_mail(self, receiver_mail='', attachements_files=[]):
         sender_email = self.ui.leLogin.text()
-        receiver_email = self.ui.leLogin.text()
-        body = 'Привет всем!!!'
-        today = date.today()
+        receiver_email = receiver_mail  # self.ui.leLogin.text()
         msg = MIMEMultipart()
-        msg['Subject'] = 'Квитанции за месяц ' + str(today.month) + get_month_in_russian() # получаем текущую дату 'Июнь'
+        msg['Subject'] = 'Квитанции за месяц ' + \
+            get_month_in_russian()  # получаем текущий месяц
         msg['From'] = sender_email
         msg['To'] = receiver_email
-
-        # msgText = MIMEText('<b>%s</b>' % (body), 'html')
-        # msg.attach(msgText)
-        #
-        # pdf = MIMEApplication(open("c:\\TEMP\\test.pdf", 'rb').read())
-        # pdf.add_header('Content-Disposition', 'attachment', filename="test.pdf")
-        # msg.attach(pdf)
 
         # HTML Message Part
         html = """\
@@ -474,6 +498,7 @@ class MainWindow(QMainWindow):
             <p><b>Квитанции от АО «2МЕН ГРУПП»</b>
             <br>
                Пожалуйста смотрите файлы во вложении<br>
+               С уважением, Управляющая компания АО «2МЕН ГРУПП».
             </p>
           </body>
         </html>
@@ -482,45 +507,40 @@ class MainWindow(QMainWindow):
         msg.attach(part)
 
         # Add Attachment
-        filename = "c:\\TEMP\\test.pdf"
-        with open(filename, "rb") as attachment:
-            part = MIMEBase("application", "octet-stream")
-            part.set_payload(attachment.read())
-        encoders.encode_base64(part)
-        # Set mail headers
-        part.add_header(
-            "Content-Disposition",
-            "attachment", filename=filename
-        )
-        msg.attach(part)
-
-        # Add Attachment
-        filename = "c:\\TEMP\\test2.pdf"
-        with open(filename, "rb") as attachment:
-            part = MIMEBase("application", "octet-stream")
-            part.set_payload(attachment.read())
-        encoders.encode_base64(part)
-        # Set mail headers
-        part.add_header(
-            "Content-Disposition",
-            "attachment", filename=filename
-        )
-        msg.attach(part)
-
-
-
-
+        for file_one in attachements_files:
+            filename = file_one
+            with open(filename, "rb") as attachment:
+                part = MIMEBase("application", "octet-stream")
+                part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            # Set mail headers
+            part.add_header(
+                "Content-Disposition",
+                "attachment", filename=filename
+            )
+            msg.attach(part)
 
         try:
             context = ssl.create_default_context()
+            str_msg = f"Отправляем на адрес: {receiver_email}"
+            logging.info(str_msg)
+            self.ui.lvLog.addItem(str_msg)
+
+            print(str_msg)
             with smtplib.SMTP_SSL(self.ui.leServer.text(), self.ui.lePort.text(), context=context) as mailsender:
-                #mailsender.ehlo()
-                #mailsender.starttls()
-                mailsender.login(self.ui.leLogin.text(), self.ui.lePassword.text())
-                mailsender.sendmail(sender_email, receiver_email, msg.as_string())
+                # mailsender.ehlo()
+                # mailsender.starttls()
+                mailsender.login(self.ui.leLogin.text(),
+                                 self.ui.lePassword.text())
+                mailsender.sendmail(
+                    sender_email, receiver_email, msg.as_string())
                 mailsender.close()
 
         except Exception as e:
+            str_msg = f"Не удалось отправить на адрес: {receiver_email}"
+            logging.info(str_msg)
+            self.ui.lvLog.addItem(str_msg)
+            print(str_msg)
             print(e)
 
 
