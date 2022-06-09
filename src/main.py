@@ -323,7 +323,7 @@ class MainWindow(QMainWindow):
                         str_out_json = os.path.join(
                             full_name_pdf_out, "info.json")
 
-                        with open(str_out_json, 'w', encoding='utf-8') as f:
+                        with open(str_out_json, 'a', encoding='utf-8') as f:
                             json.dump(person_json, f,
                                       ensure_ascii=False, indent=4)
                         # shutil.copy(str_from, str_out)
@@ -400,12 +400,20 @@ class MainWindow(QMainWindow):
                         "lic_id": p_lic_id,
                         "email": p_email,
                     }
+
                 str_out_json = os.path.join(
-                    dirname_full_out, "info.json")
+                    dirname_full_out, "info.txt")
 
                 with open(str_out_json, 'a', encoding='utf-8') as f:
                     json.dump(person_json, f,
                               ensure_ascii=False, indent=4)
+
+                file_email_json = os.path.join(
+                    dirname_full_out, "email.json")
+                if not os.path.isfile(file_email_json):
+                    with open(file_email_json, 'a', encoding='utf-8') as f:
+                        json.dump(p_email, f,
+                                  ensure_ascii=False, indent=4)
 
         dlg = CustomDialog()
         if dlg.exec():
@@ -473,14 +481,47 @@ class MainWindow(QMainWindow):
         #self.folder_excel_fullpath = fname
         self.folder_pdf = os.path.dirname(os.path.dirname(fname))
         self.ui.lvLog.addItem(f"Указан: {self.folder_pdf}")
-        filenames = []
+
+        json_filenames = []
         # r=root, d=directories, f = files
         for r, d, f in os.walk(self.folder_pdf):
             for file in f:
-                if str(file).lower() == 'info.json':
+                if str(file).lower() == 'email.json':
                     fullname = os.path.join(r, file)
-                    filenames.append(fullname)
+                    json_filenames.append(fullname)
                     self.ui.lvLog.addItem(f"Найден: {fullname}")
+
+        if len(json_filenames) < 1:
+            self.ui.lvLog.addItem(
+                f"НЕ нашли в указанной папке файлов email.json!!!")
+            return
+
+        self.ui.pbMain.setRange(0, len(json_filenames) - 1)
+        counter = 0
+        for file_json in json_filenames:
+            self.ui.pbMain.setValue(counter)
+            counter += 1
+            if os.path.isfile(file_json):
+                print(file_json)
+                self.ui.lvLog.addItem(f"Найден: {file_json}")
+                with open(file_json) as f:
+                    json_info = json.loads(f.read())
+                    # json_info = json.loads(
+                    #     "[" + f.read().replace("}\n{", "},\n{") + "]")
+                    print(json_info)
+                    str_emeil = json_info[0]
+                    self.ui.lvLog.addItem(f"Нашли: { str_emeil }")
+                dir_json = os.path.dirname(file_json)
+
+                pdf_filenames = []
+                # r=root, d=directories, f = files
+                for r, d, f in os.walk(dir_json):
+                    for file in f:
+                        if file.endswith(".pdf") or file.endswith(".PDF"):
+                            self.ui.lvLog.addItem(f"Нашли для негоPDF: {file}")
+                            print(f"Нашли для негоPDF: {file}")
+                            self.ui.lvLog.scrollToBottom()
+                            pdf_filenames.append(os.path.join(r, file))
 
     def send_mail(self, receiver_mail='', attachements_files=[]):
         sender_email = self.ui.leLogin.text()
