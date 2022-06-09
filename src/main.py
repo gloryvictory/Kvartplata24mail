@@ -428,7 +428,6 @@ class MainWindow(QMainWindow):
         else:
             self.ui.lvLog.addItem(
                 f"Сортировка файлов PDF закончена!")
-
         self.ui.btnPDF.setEnabled(False)
 
     """--------------------------------------"""
