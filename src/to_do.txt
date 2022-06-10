@@ -1,14 +1,3 @@
-обсудить...
-
-select Person.surname, Person.name, Person.middlename, Person.lic_id, Person.street_addr, Person.email, Files.file_name
---Person.*, Files.*
-from Person
-LEFT JOIN Files
-          ON Person.lic_id = Files.lic_id
---group by lic_id 
-order by Person.surname
-
-
 -- только собственники
 select Person.surname, Person.name, Person.middlename, Person.lic_id, Person.street_addr, Person.email, Files.file_name
 --Person.*, Files.*

@@ -515,12 +515,12 @@ class MainWindow(QMainWindow):
                 self.ui.lvLog.addItem(f"Найден: {file_json}")
                 self.ui.lvLog.scrollToBottom()
                 with open(file_json) as f:
-                    json_info = json.loads(f.read())
+                    str_emeil = json.loads(f.read())
                     # json_info = json.loads(
                     #     "[" + f.read().replace("}\n{", "},\n{") + "]")
-                    print(json_info)
-                    str_emeil = json_info[0]
-                    self.ui.lvLog.addItem(f"Нашли: { json_info }")
+                    print(str_emeil)
+                    #str_emeil = json_info[0]
+                    self.ui.lvLog.addItem(f"Нашли: { str_emeil }")
                     self.ui.lvLog.scrollToBottom()
                 dir_json = os.path.dirname(file_json)
 
@@ -534,15 +534,18 @@ class MainWindow(QMainWindow):
                             print(f"Нашли для него PDF: {file}")
                             pdf_filenames.append(os.path.join(r, file))
                             self.ui.lvLog.scrollToBottom()
+                # раскомментировать в продакшн
+                #send_mail(str_emeil, pdf_filenames)
 
-    def send_mail(self, receiver_mail='', attachements_files=[]):
+    def send_mail(receiver_mail='', attachements_files=[]):
         sender_email = self.ui.leLogin.text()
         receiver_email = receiver_mail  # self.ui.leLogin.text()
         msg = MIMEMultipart()
         msg['Subject'] = 'Квитанции за месяц ' + \
             get_month_in_russian()  # получаем текущий месяц
         msg['From'] = sender_email
-        msg['To'] = receiver_email
+        # раскомментировать в продакшн
+        msg['To'] = 'kvartplata2472@mail.ru'  # receiver_email
 
         # HTML Message Part
         html = """\
