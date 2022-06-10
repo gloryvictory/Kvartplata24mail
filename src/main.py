@@ -46,6 +46,7 @@ from peewee import Table
 from database import Person, Files
 import pandas as pd
 from dialogs import CustomDialog
+from files_utils import file_save_email_json, file_save_json
 
 from ui.main_form import Ui_frmMain
 import config as cfg
@@ -105,6 +106,7 @@ class MainWindow(QMainWindow):
             logging.info(msg_str)
             # print(msg_str)
             self.ui.lvLog.addItem(msg_str)
+            self.ui.lvLog.scrollToBottom()
 
         if os.path.isfile(file_excel_full_path):
             one_person = Person()
@@ -168,6 +170,7 @@ class MainWindow(QMainWindow):
                 list_out = set(list_user_no_email)  # список людей без почты
                 for item in list_out:
                     self.ui.lvLog.addItem(f"Нет EMAIL у:  {item} ")
+                    self.ui.lvLog.scrollToBottom()
                     if not item.count('\n'):
                         item = item + '\n'
                     f.write(item)
@@ -180,7 +183,7 @@ class MainWindow(QMainWindow):
                 f"Найдено, что у {cnt_missed} собственников нет EMAIL")
             self.ui.lvLog.addItem(
                 f"В Базу загружено {cnt_load} собственников, у которых есть EMAIL")
-
+            self.ui.lvLog.scrollToBottom()
             # Print the content
             # print("The content of the file is:\n", data)
 
@@ -201,6 +204,7 @@ class MainWindow(QMainWindow):
                                                 "Open Excel File", folder_data_start, "Excel Files (*.xlsx)")
         fname = os.path.normpath(fname1)
         self.ui.lvLog.addItem(f"Указан файл Excel: {fname}")
+        self.ui.lvLog.scrollToBottom()
         self.folder_excel_fullpath = fname
 
         # это на случай сохранения sqlite базы в папке с файликом Excel
@@ -225,6 +229,7 @@ class MainWindow(QMainWindow):
             logging.info(msg_str)
             print(msg_str)
             self.ui.lvLog.addItem(msg_str)
+            self.ui.lvLog.scrollToBottom()
         else:
             # self.ui.btnPDF.setEnabled(False);
             filenames = []
@@ -236,6 +241,7 @@ class MainWindow(QMainWindow):
 
             msg_str = f"Найдено PDF файлов: {str(len(filenames))} "
             self.ui.lvLog.addItem(msg_str)
+            self.ui.lvLog.scrollToBottom()
 
             one_file = Files()
             one_file.create_table()
@@ -244,6 +250,7 @@ class MainWindow(QMainWindow):
                 msg_str = ff
                 full_name = os.path.join(folder_pdf_path, ff)
                 self.ui.lvLog.addItem(msg_str)
+                self.ui.lvLog.scrollToBottom()
                 filename_without_ext = str(
                     os.path.splitext(os.path.basename(ff))[0])
                 adr_array = filename_without_ext.split('_')
@@ -267,6 +274,7 @@ class MainWindow(QMainWindow):
     """------------- сортируем по лицевому счету -------------------------"""
 
     def pdf_to_folders_by_lic_id(self):
+        self.ui.btnDoByFIO.setEnabled(False)
         folder_pdf_path = self.folder_pdf
         list_lic_id = []
         query = Person.select(Person.lic_id).distinct().execute()
@@ -320,23 +328,25 @@ class MainWindow(QMainWindow):
                         os.mkdir(full_name_pdf_out)
                         str_out = os.path.join(
                             full_name_pdf_out,  str_file_out_name)
-                        str_out_json = os.path.join(
-                            full_name_pdf_out, "info.json")
+                        # сохраняем "info.txt" - тут все найденные данные по pdf
+                        file_save_json(full_name_pdf_out,
+                                       person_json, "info.txt")
 
-                        with open(str_out_json, 'a', encoding='utf-8') as f:
-                            json.dump(person_json, f,
-                                      ensure_ascii=False, indent=4)
+                        # сохраняем "email.json" - тут EMAIL
+                        file_save_email_json(full_name_pdf_out, p_email)
+
                         # shutil.copy(str_from, str_out)
                         shutil.move(str_from, str_out)
                         self.ui.lvLog.addItem(
                             f"копируем из: {str_from} в: {str_out}")
-
+                        self.ui.lvLog.scrollToBottom()
             else:
                 print("Файл для " + item + " - Не найден!")
 
         dlg = CustomDialog()
         if dlg.exec():
             self.ui.lvLog.addItem("Сортировка закончена успешно!")
+            self.ui.lvLog.scrollToBottom()
             # print("Сортировка закончена успешно!")
             FILEBROWSER_PATH = os.path.join(
                 os.getenv('WINDIR'), 'explorer.exe')
@@ -347,12 +357,14 @@ class MainWindow(QMainWindow):
         else:
             self.ui.lvLog.addItem(
                 f"Сортировка файлов PDF закончена!")
-
+            self.ui.lvLog.scrollToBottom()
         self.ui.btnPDF.setEnabled(False)
+        self.ui.btnDoByFIO.setEnabled(False)
 
     """------------- сортируем по ФИО -------------------------"""
 
     def pdf_to_folders_by_fio(self):
+        self.ui.btnDoByLicID.setEnabled(False)
         folder_pdf_path = self.folder_pdf
         # list_lic_id = []
 
@@ -400,24 +412,15 @@ class MainWindow(QMainWindow):
                         "lic_id": p_lic_id,
                         "email": p_email,
                     }
-
-                str_out_json = os.path.join(
-                    dirname_full_out, "info.txt")
-
-                with open(str_out_json, 'a', encoding='utf-8') as f:
-                    json.dump(person_json, f,
-                              ensure_ascii=False, indent=4)
-
-                file_email_json = os.path.join(
-                    dirname_full_out, "email.json")
-                if not os.path.isfile(file_email_json):
-                    with open(file_email_json, 'a', encoding='utf-8') as f:
-                        json.dump(p_email, f,
-                                  ensure_ascii=False, indent=4)
+                # сохраняем "info.txt" - тут все найденные данные по pdf
+                file_save_json(dirname_full_out, person_json, "info.txt")
+                # сохраняем "email.json" - тут EMAIL
+                file_save_email_json(dirname_full_out, p_email)
 
         dlg = CustomDialog()
         if dlg.exec():
             self.ui.lvLog.addItem("Сортировка закончена успешно!")
+            self.ui.lvLog.scrollToBottom()
             # print("Сортировка закончена успешно!")
             FILEBROWSER_PATH = os.path.join(
                 os.getenv('WINDIR'), 'explorer.exe')
@@ -428,7 +431,9 @@ class MainWindow(QMainWindow):
         else:
             self.ui.lvLog.addItem(
                 f"Сортировка файлов PDF закончена!")
+            self.ui.lvLog.scrollToBottom()
         self.ui.btnPDF.setEnabled(False)
+        self.ui.btnDoByFIO.setEnabled(False)
 
     """--------------------------------------"""
     ''' При нажатии на кнопку "Открыть" и указываем файл PDF'''
@@ -445,6 +450,7 @@ class MainWindow(QMainWindow):
         self.ui.pbMain.setValue(0)  # сдвигаем прогресс бар
 
         self.ui.lvLog.addItem(f"Указан файл PDF: {fname}")
+        self.ui.lvLog.scrollToBottom()
 
         self.folder_pdf = os.path.dirname(fname)
 
@@ -469,6 +475,7 @@ class MainWindow(QMainWindow):
         fname = ''
         if len(self.folder_pdf) < 2:
             self.ui.lvLog.addItem(f"Не указана папка с файлами PDF!")
+            self.ui.lvLog.scrollToBottom()
             fname1, _ = QFileDialog.getOpenFileName(self,
                                                     "Open JSON File", "/", "JSON Files (*.json)")
             fname = os.path.normpath(fname1)
@@ -476,10 +483,11 @@ class MainWindow(QMainWindow):
                 self.ui.lvLog.addItem(f"НЕ Указали файл JSON!!!")
                 return
 
-        self.ui.lvLog.addItem(f"Указан файл JSON: {fname}")
-        #self.folder_excel_fullpath = fname
-        self.folder_pdf = os.path.dirname(os.path.dirname(fname))
-        self.ui.lvLog.addItem(f"Указан: {self.folder_pdf}")
+            self.ui.lvLog.addItem(f"Указан файл JSON: {fname}")
+            self.ui.lvLog.scrollToBottom()
+            self.folder_pdf = os.path.dirname(os.path.dirname(fname))
+            self.ui.lvLog.addItem(f"Указан: {self.folder_pdf}")
+            self.ui.lvLog.scrollToBottom()
 
         json_filenames = []
         # r=root, d=directories, f = files
@@ -489,10 +497,12 @@ class MainWindow(QMainWindow):
                     fullname = os.path.join(r, file)
                     json_filenames.append(fullname)
                     self.ui.lvLog.addItem(f"Найден: {fullname}")
+                    self.ui.lvLog.scrollToBottom()
 
         if len(json_filenames) < 1:
             self.ui.lvLog.addItem(
                 f"НЕ нашли в указанной папке файлов email.json!!!")
+            self.ui.lvLog.scrollToBottom()
             return
 
         self.ui.pbMain.setRange(0, len(json_filenames) - 1)
@@ -503,13 +513,15 @@ class MainWindow(QMainWindow):
             if os.path.isfile(file_json):
                 print(file_json)
                 self.ui.lvLog.addItem(f"Найден: {file_json}")
+                self.ui.lvLog.scrollToBottom()
                 with open(file_json) as f:
                     json_info = json.loads(f.read())
                     # json_info = json.loads(
                     #     "[" + f.read().replace("}\n{", "},\n{") + "]")
                     print(json_info)
                     str_emeil = json_info[0]
-                    self.ui.lvLog.addItem(f"Нашли: { str_emeil }")
+                    self.ui.lvLog.addItem(f"Нашли: { json_info }")
+                    self.ui.lvLog.scrollToBottom()
                 dir_json = os.path.dirname(file_json)
 
                 pdf_filenames = []
@@ -517,10 +529,11 @@ class MainWindow(QMainWindow):
                 for r, d, f in os.walk(dir_json):
                     for file in f:
                         if file.endswith(".pdf") or file.endswith(".PDF"):
-                            self.ui.lvLog.addItem(f"Нашли для негоPDF: {file}")
-                            print(f"Нашли для негоPDF: {file}")
-                            self.ui.lvLog.scrollToBottom()
+                            self.ui.lvLog.addItem(
+                                f"Нашли для него PDF: {file}")
+                            print(f"Нашли для него PDF: {file}")
                             pdf_filenames.append(os.path.join(r, file))
+                            self.ui.lvLog.scrollToBottom()
 
     def send_mail(self, receiver_mail='', attachements_files=[]):
         sender_email = self.ui.leLogin.text()
@@ -565,7 +578,7 @@ class MainWindow(QMainWindow):
             str_msg = f"Отправляем на адрес: {receiver_email}"
             logging.info(str_msg)
             self.ui.lvLog.addItem(str_msg)
-
+            self.ui.lvLog.scrollToBottom()
             print(str_msg)
             with smtplib.SMTP_SSL(self.ui.leServer.text(), self.ui.lePort.text(), context=context) as mailsender:
                 # mailsender.ehlo()
@@ -575,11 +588,15 @@ class MainWindow(QMainWindow):
                 mailsender.sendmail(
                     sender_email, receiver_email, msg.as_string())
                 mailsender.close()
-
+                str_msg = f"Отправлено УСПЕШНО на адрес: {receiver_email}"
+                logging.info(str_msg)
+                self.ui.lvLog.addItem(str_msg)
+                self.ui.lvLog.scrollToBottom()
         except Exception as e:
             str_msg = f"Не удалось отправить на адрес: {receiver_email}"
             logging.info(str_msg)
             self.ui.lvLog.addItem(str_msg)
+            self.ui.lvLog.scrollToBottom()
             print(str_msg)
             print(e)
 
