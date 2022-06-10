@@ -537,7 +537,8 @@ class MainWindow(QMainWindow):
                 # раскомментировать в продакшн
                 #send_mail(str_emeil, pdf_filenames)
 
-    def send_mail(receiver_mail='', attachements_files=[]):
+    # отсылка почты по адресу с аттачментом
+    def send_mail(self, receiver_mail='', attachements_files=[]):
         sender_email = self.ui.leLogin.text()
         receiver_email = receiver_mail  # self.ui.leLogin.text()
         msg = MIMEMultipart()
