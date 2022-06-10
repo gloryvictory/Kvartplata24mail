@@ -20,7 +20,7 @@ FOLDER_DATA = 'C:\\Glory\\Projects\\Python\\Kvartplata24mail\\data\\'
 
 
 FILE_LOG_NAME = 'kvartplata24'
-FILE_LOG = str(strftime("%Y-%m-%d") + '_' + FILE_LOG_NAME + '.log')
+FILE_LOG = str(strftime("%Y-%m-%d-%H-%M-%S") + '_' + FILE_LOG_NAME + '.log')
 FILE_LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 #DATABASE_NAME = str(strftime("%Y-%m-%d") + '_' + FILE_LOG_NAME + '.db')
 DATABASE_NAME = 'people.db'
