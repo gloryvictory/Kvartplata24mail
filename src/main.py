@@ -535,7 +535,7 @@ class MainWindow(QMainWindow):
                             pdf_filenames.append(os.path.join(r, file))
                             self.ui.lvLog.scrollToBottom()
                 # раскомментировать в продакшн
-                #send_mail(str_emeil, pdf_filenames)
+                self.send_mail(str_emeil, pdf_filenames)
 
     # отсылка почты по адресу с аттачментом
     def send_mail(self, receiver_mail='', attachements_files=[]):
@@ -546,7 +546,7 @@ class MainWindow(QMainWindow):
             get_month_in_russian()  # получаем текущий месяц
         msg['From'] = sender_email
         # раскомментировать в продакшн
-        msg['To'] = 'kvartplata2472@mail.ru'  # receiver_email
+        msg['To'] = receiver_email
 
         # HTML Message Part
         html = """\
@@ -603,7 +603,10 @@ class MainWindow(QMainWindow):
             self.ui.lvLog.scrollToBottom()
             print(str_msg)
             print(e)
-
+        str_msg = f"Работа завершена!!!"
+        logging.info(str_msg)
+        self.ui.lvLog.addItem(str_msg)
+        self.ui.lvLog.scrollToBottom()
 
 def make_gui():
     app = QApplication(sys.argv)
